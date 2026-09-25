@@ -4,6 +4,7 @@ import { ChevronDown, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { resolveUploadUrl } from '../api/client';
 import Avatar from './Avatar';
+import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
 export default function NavBar() {
@@ -19,9 +20,7 @@ export default function NavBar() {
     <nav className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-bold text-navy-900 dark:text-white">
-          <span className="w-9 h-9 rounded-lg bg-navy-900 dark:bg-navy-700 flex items-center justify-center text-white text-sm shadow-sm">
-            NC
-          </span>
+          <Logo className="w-9 h-9 shadow-sm rounded-full" />
           NeuroClinic
         </Link>
 

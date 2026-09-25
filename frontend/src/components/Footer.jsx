@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Clock, Mail, MapPin, Phone } from 'lucide-react';
+import Logo from './Logo';
 
 // Footer estático para las páginas públicas — sin lógica, solo cierre visual/institucional.
 // Los datos de contacto/horario son placeholder hasta que la clínica los confirme.
@@ -9,7 +10,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <div>
           <div className="flex items-center gap-2 font-bold">
-            <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm">NC</span>
+            <Logo className="w-8 h-8 rounded-full" />
             NeuroClinic
           </div>
           <p className="text-sm text-slate-300 dark:text-slate-400 mt-3 max-w-xs">
