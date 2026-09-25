@@ -4,7 +4,7 @@ const SIZES = {
   lg: 'w-14 h-14 text-lg',
 };
 
-// Avatar con foto real cuando hay `src`; si no, cae a iniciales con degradado indigo→emerald
+// Avatar con foto real cuando hay `src`; si no, cae a iniciales sobre navy sólido
 // (el comportamiento original, usado en catálogos sin foto de perfil).
 export default function Avatar({ nombre = '', apellido = '', size = 'md', src }) {
   if (src) {
@@ -20,7 +20,7 @@ export default function Avatar({ nombre = '', apellido = '', size = 'md', src })
   const initials = `${nombre[0] || ''}${apellido[0] || ''}`.toUpperCase() || '?';
   return (
     <span
-      className={`flex-shrink-0 rounded-full bg-gradient-to-br from-indigo-500 to-emerald-400 text-white font-semibold flex items-center justify-center ${SIZES[size]}`}
+      className={`flex-shrink-0 rounded-full bg-gradient-to-br from-navy-700 to-navy-900 dark:from-navy-600 dark:to-navy-800 text-white font-semibold flex items-center justify-center ${SIZES[size]}`}
     >
       {initials}
     </span>

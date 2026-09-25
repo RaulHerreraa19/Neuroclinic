@@ -1,19 +1,26 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
-        // Paleta tomada de image.png (mockup de marca): navy para texto/encabezados,
-        // lavanda para el fondo de página. Los acentos indigo/emerald/orange de Tailwind
-        // ya coinciden casi exactamente con el resto del mockup, así que no se redefinen.
+        // Paleta propia de la clínica: navy como columna estructural (nav, sidebars,
+        // footer, hero), coral reservado a CTAs de conversión pública, lavanda como
+        // acento de marca solo en la landing. indigo/emerald/slate/amber/red de Tailwind
+        // se usan como acentos secundarios y semántica de estado.
         navy: {
           50: '#EEF0F8',
           100: '#DCE0F2',
+          200: '#C7CCE8',
+          300: '#A8AFDA',
           400: '#4B5488',
+          500: '#3B4570',
+          600: '#2E3568',
           700: '#232A5C',
           800: '#1B2247',
           900: '#1B2A4A',
+          950: '#10142C',
         },
         coral: {
           400: '#FF9270',

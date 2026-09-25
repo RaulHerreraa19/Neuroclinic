@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Wallet, Receipt, CalendarDays, Stethoscope } from 'lucide-react';
 import { getRevenue, listMyDoctors, listAllAppointments } from '../api/admin';
 import AdminLayout from '../components/AdminLayout';
 import PageHeader from '../components/PageHeader';
@@ -37,31 +38,33 @@ export default function AdminDashboard() {
     <AdminLayout>
       <PageHeader eyebrow="Panel admin" title="Resumen de la clínica" subtitle="Ingresos y actividad del mes en curso, de tus doctores." />
 
-      {loading && <p className="text-slate-500">Cargando...</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400">Cargando...</p>}
 
       {!loading && (
         <>
           <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-            <StatCard label="Ingresos del mes" value={`$${(revenue?.totalIngresos || 0).toFixed(2)}`} icon="💰" />
-            <StatCard label="Consultas cobradas" value={revenue?.totalCitasCobradas || 0} icon="🧾" />
-            <StatCard label="Citas del mes" value={appointments.length} icon="🗓️" />
-            <StatCard label="Doctores activos" value={doctoresActivos} icon="🩺" />
+            <StatCard label="Ingresos del mes" value={`$${(revenue?.totalIngresos || 0).toFixed(2)}`} icon={Wallet} />
+            <StatCard label="Consultas cobradas" value={revenue?.totalCitasCobradas || 0} icon={Receipt} />
+            <StatCard label="Citas del mes" value={appointments.length} icon={CalendarDays} />
+            <StatCard label="Doctores activos" value={doctoresActivos} icon={Stethoscope} />
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-            <h2 className="font-semibold text-navy-900 mb-4">Ingresos por doctor (este mes)</h2>
+          <div className="card-surface p-5">
+            <h2 className="font-semibold text-navy-900 dark:text-white mb-4">Ingresos por doctor (este mes)</h2>
             {revenue?.porDoctor?.length ? (
               <div className="space-y-3">
                 {revenue.porDoctor.map((d) => (
                   <div key={d.doctorId} className="flex items-center justify-between gap-4 text-sm">
-                    <span className="text-slate-700 font-medium">{d.nombre}</span>
-                    <span className="text-slate-500">{d.citas} cita{d.citas === 1 ? '' : 's'}</span>
-                    <span className="text-navy-900 font-semibold">${d.total.toFixed(2)}</span>
+                    <span className="text-slate-700 dark:text-slate-200 font-medium">{d.nombre}</span>
+                    <span className="text-slate-500 dark:text-slate-400">
+                      {d.citas} cita{d.citas === 1 ? '' : 's'}
+                    </span>
+                    <span className="text-navy-900 dark:text-white font-semibold">${d.total.toFixed(2)}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-400">Todavía no hay consultas cobradas este mes.</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">Todavía no hay consultas cobradas este mes.</p>
             )}
           </div>
         </>
@@ -70,14 +73,14 @@ export default function AdminDashboard() {
   );
 }
 
-function StatCard({ label, value, icon }) {
+function StatCard({ label, value, icon: Icon }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-      <div className="flex items-center gap-2 text-slate-400 text-sm mb-2">
-        <span aria-hidden="true">{icon}</span>
+    <div className="card-surface p-5">
+      <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-sm mb-2">
+        <Icon size={16} aria-hidden="true" />
         {label}
       </div>
-      <p className="text-2xl font-bold text-navy-900">{value}</p>
+      <p className="text-2xl font-bold text-navy-900 dark:text-white">{value}</p>
     </div>
   );
 }

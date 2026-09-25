@@ -4,6 +4,7 @@ import AppointmentCard from '../components/AppointmentCard';
 import AdminLayout from '../components/AdminLayout';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
+import { CalendarX } from 'lucide-react';
 import { ESTADO_LABELS } from '../utils/appointmentStatus';
 
 const ESTADOS = ['pendiente', 'confirmada', 'completada', 'cancelada', 'no_asistio'];
@@ -26,7 +27,7 @@ export default function AdminAppointments() {
     <AdminLayout>
       <PageHeader eyebrow="Panel admin" title="Citas de tus doctores" subtitle="Agenda de los doctores que tú diste de alta." />
 
-      {loading && <p className="text-slate-500">Cargando...</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400">Cargando...</p>}
 
       {!loading && (
         <div className="flex flex-wrap gap-2 mb-6">
@@ -57,7 +58,7 @@ export default function AdminAppointments() {
             avatarApellido={a.patient?.apellidoPaterno}
           />
         ))}
-        {!loading && visibles.length === 0 && <EmptyState icon="📅" message="No hay citas para este filtro." />}
+        {!loading && visibles.length === 0 && <EmptyState icon={CalendarX} message="No hay citas para este filtro." />}
       </div>
     </AdminLayout>
   );
@@ -70,8 +71,8 @@ function FilterChip({ label, active, onClick }) {
       onClick={onClick}
       className={`text-sm capitalize px-3.5 py-1.5 rounded-full border transition ${
         active
-          ? 'bg-indigo-600 text-white border-indigo-600'
-          : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
+          ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700'
+          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-navy-300 dark:hover:border-navy-600'
       }`}
     >
       {label}

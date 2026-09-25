@@ -45,7 +45,7 @@ export default function MyProfile() {
       <PageHeader eyebrow="Tu cuenta" title="Mi perfil" subtitle="Datos personales y foto de perfil." />
 
       <div className="grid lg:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col items-center text-center">
+        <div className="card-surface p-5 flex flex-col items-center text-center">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -58,20 +58,23 @@ export default function MyProfile() {
             </span>
           </button>
           <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} hidden />
-          <p className="font-semibold text-navy-900 mt-3">
+          <p className="font-semibold text-navy-900 dark:text-white mt-3">
             {user.nombre} {user.apellidoPaterno}
           </p>
           <div className="flex flex-wrap justify-center gap-1.5 mt-2">
             {user.roles.map((r) => (
-              <span key={r} className="text-[11px] font-medium bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full">
+              <span
+                key={r}
+                className="text-[11px] font-medium bg-navy-50 text-navy-700 dark:bg-navy-800 dark:text-navy-100 px-2 py-0.5 rounded-full"
+              >
                 {ROLE_LABELS[r] || r}
               </span>
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-          <h2 className="font-semibold text-navy-900 mb-3">Datos personales</h2>
+        <div className="card-surface p-5">
+          <h2 className="font-semibold text-navy-900 dark:text-white mb-3">Datos personales</h2>
           <dl className="space-y-2.5 text-sm">
             <Row label="Nombre completo" value={`${user.nombre} ${user.apellidoPaterno} ${user.apellidoMaterno || ''}`} />
             <Row label="Correo" value={user.email} />
@@ -80,8 +83,8 @@ export default function MyProfile() {
         </div>
 
         {doctorProfile && (
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-            <h2 className="font-semibold text-navy-900 mb-3">Perfil profesional</h2>
+          <div className="card-surface p-5">
+            <h2 className="font-semibold text-navy-900 dark:text-white mb-3">Perfil profesional</h2>
             <dl className="space-y-2.5 text-sm">
               <Row label="Especialidad" value={doctorProfile.especialidad} />
               <Row label="Duración de cita" value={`${doctorProfile.duracionCitaMinutos} min`} />
@@ -95,9 +98,9 @@ export default function MyProfile() {
 
 function Row({ label, value }) {
   return (
-    <div className="flex justify-between gap-3 border-b border-slate-100 pb-2">
-      <dt className="text-slate-500">{label}</dt>
-      <dd className="text-navy-900 text-right">{value}</dd>
+    <div className="flex justify-between gap-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+      <dt className="text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="text-navy-900 dark:text-white text-right">{value}</dd>
     </div>
   );
 }

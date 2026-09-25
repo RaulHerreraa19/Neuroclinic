@@ -35,7 +35,7 @@ export function ToastProvider({ children }) {
           <div
             key={toast.id}
             role="status"
-            className={`pointer-events-auto animate-slide-in-right rounded-2xl shadow-lg text-white px-4 py-3 flex items-start gap-3 ${
+            className={`pointer-events-auto animate-slide-in-right rounded-xl shadow-lg text-white px-4 py-3 flex items-start gap-3 ${
               STYLES[toast.type] || STYLES.info
             }`}
           >

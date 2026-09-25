@@ -149,9 +149,9 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
       <form onSubmit={handleSubmit} className="space-y-5">
         <Section title="Horario">
           {loadingSlots ? (
-            <p className="text-sm text-slate-500">Cargando horarios disponibles...</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Cargando horarios disponibles...</p>
           ) : slots.length === 0 ? (
-            <p className="text-sm text-slate-500">No tienes horarios disponibles este día.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No tienes horarios disponibles este día.</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {slots.map((s) => (
@@ -159,10 +159,10 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
                   key={s.horaInicio}
                   type="button"
                   onClick={() => setSelectedSlot(s)}
-                  className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                  className={`px-3 py-1.5 rounded-lg text-sm border transition ${
                     selectedSlot?.horaInicio === s.horaInicio
-                      ? 'bg-indigo-600 text-white border-indigo-600'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-400'
+                      ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700'
+                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-navy-400 dark:hover:border-navy-500'
                   }`}
                 >
                   {s.horaInicio.slice(0, 5)}
@@ -192,16 +192,16 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
                   setQuery(e.target.value);
                   setSelectedPatient(null);
                 }}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                className="input-field"
               />
               {selectedPatient ? (
-                <div className="mt-2 flex items-center gap-3 bg-indigo-50 rounded-xl p-3">
+                <div className="mt-2 flex items-center gap-3 bg-navy-50 dark:bg-navy-900/40 rounded-lg p-3">
                   <Avatar nombre={selectedPatient.nombre} apellido={selectedPatient.apellidoPaterno} size="sm" />
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-navy-900 text-sm truncate">
+                    <p className="font-medium text-navy-900 dark:text-white text-sm truncate">
                       {selectedPatient.nombre} {selectedPatient.apellidoPaterno}
                     </p>
-                    <p className="text-xs text-slate-500 truncate">{selectedPatient.email}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{selectedPatient.email}</p>
                   </div>
                   <button
                     type="button"
@@ -209,16 +209,16 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
                       setSelectedPatient(null);
                       setQuery('');
                     }}
-                    className="text-xs text-indigo-600 hover:underline flex-shrink-0"
+                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex-shrink-0"
                   >
                     Cambiar
                   </button>
                 </div>
               ) : (
                 <div className="mt-2 max-h-48 overflow-y-auto space-y-1">
-                  {searching && <p className="text-xs text-slate-400 px-1">Buscando...</p>}
+                  {searching && <p className="text-xs text-slate-400 dark:text-slate-500 px-1">Buscando...</p>}
                   {!searching && query.trim().length >= 2 && results.length === 0 && (
-                    <p className="text-xs text-slate-400 px-1">Sin resultados. Prueba "Paciente nuevo".</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 px-1">Sin resultados. Prueba "Paciente nuevo".</p>
                   )}
                   {results.map((p) => (
                     <button
@@ -228,14 +228,14 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
                         setSelectedPatient(p);
                         setResults([]);
                       }}
-                      className="w-full flex items-center gap-3 text-left px-2 py-2 rounded-lg hover:bg-slate-50 transition"
+                      className="w-full flex items-center gap-3 text-left px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                     >
                       <Avatar nombre={p.nombre} apellido={p.apellidoPaterno} size="sm" />
                       <div className="min-w-0">
-                        <p className="text-sm text-navy-900 truncate">
+                        <p className="text-sm text-navy-900 dark:text-white truncate">
                           {p.nombre} {p.apellidoPaterno}
                         </p>
-                        <p className="text-xs text-slate-500 truncate">{p.email}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{p.email}</p>
                       </div>
                     </button>
                   ))}
@@ -273,24 +273,20 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
                   required
                 />
                 <div>
-                  <label className="block text-sm font-medium text-slate-600 mb-1">Sexo</label>
-                  <select
-                    value={patientForm.sexo}
-                    onChange={updatePatientField('sexo')}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-                  >
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Sexo</label>
+                  <select value={patientForm.sexo} onChange={updatePatientField('sexo')} className="input-field">
                     <option value="femenino">Femenino</option>
                     <option value="masculino">Masculino</option>
                     <option value="otro">Otro</option>
                   </select>
                 </div>
               </div>
-              <label className="flex items-start gap-2 text-sm text-slate-600 bg-indigo-50/60 rounded-xl p-3">
+              <label className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-navy-50/60 dark:bg-navy-900/40 rounded-lg p-3">
                 <input
                   type="checkbox"
                   checked={patientForm.avisoPrivacidadAceptado}
                   onChange={updatePatientField('avisoPrivacidadAceptado')}
-                  className="mt-1 accent-indigo-600"
+                  className="mt-1 accent-navy-700"
                 />
                 <span>Confirmo que el paciente aceptó el aviso de privacidad (en persona o por teléfono).</span>
               </label>
@@ -299,17 +295,14 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-600 mb-1">Motivo de consulta (opcional)</label>
-          <textarea
-            value={motivoConsulta}
-            onChange={(e) => setMotivoConsulta(e.target.value)}
-            rows={2}
-            className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-          />
+          <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+            Motivo de consulta (opcional)
+          </label>
+          <textarea value={motivoConsulta} onChange={(e) => setMotivoConsulta(e.target.value)} rows={2} className="input-field" />
         </div>
 
         {error && (
-          <p className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+          <p className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 rounded-lg px-3 py-2.5">
             <span className="font-bold">!</span> {error}
           </p>
         )}
@@ -317,7 +310,7 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
         <button
           type="submit"
           disabled={submitting || !selectedSlot || (mode === 'new' && !patientForm.avisoPrivacidadAceptado)}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
+          className="btn-primary w-full sm:w-auto disabled:opacity-50"
         >
           {submitting ? 'Agendando...' : 'Agendar cita'}
         </button>
@@ -329,7 +322,7 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
 function Section({ title, children }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-500 mb-2">{title}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-navy-600 dark:text-navy-300 mb-2">{title}</p>
       {children}
     </div>
   );
@@ -340,8 +333,10 @@ function TabButton({ active, onClick, children }) {
     <button
       type="button"
       onClick={onClick}
-      className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition ${
-        active ? 'bg-navy-900 text-white border-navy-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+      className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition ${
+        active
+          ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700'
+          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
       }`}
     >
       {children}
@@ -352,11 +347,8 @@ function TabButton({ active, onClick, children }) {
 function Field({ label, ...props }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-      <input
-        {...props}
-        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-      />
+      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+      <input {...props} className="input-field" />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CheckCircle2, Mail } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { createAppointment } from '../api/appointments';
@@ -79,26 +80,24 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
   if (confirmed) {
     return (
       <div className="text-center py-2">
-        <div className="mx-auto w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center animate-pop">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-8 h-8 text-emerald-600">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
+        <div className="mx-auto w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center animate-pop">
+          <CheckCircle2 size={32} className="text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
         </div>
-        <h3 className="text-xl font-bold text-navy-900 mt-4">¡Cita agendada!</h3>
-        <p className="text-slate-500 mt-2">
+        <h3 className="text-xl font-bold text-navy-900 dark:text-white mt-4">¡Cita agendada!</h3>
+        <p className="text-slate-500 dark:text-slate-400 mt-2">
           Tu cita con {doctorNombre} quedó registrada para el {fecha} a las {horaInicio.slice(0, 5)}.
         </p>
         {!user && (
-          <p className="text-slate-500 mt-2 text-sm bg-slate-50 rounded-xl p-3">
-            {emailEnviado
-              ? '📧 Te enviamos un correo con tu contraseña temporal para que puedas dar seguimiento a tus citas.'
-              : 'Creamos tu cuenta, pero no pudimos enviarte el correo con tu contraseña. Contacta a la clínica para recuperarla.'}
+          <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm bg-slate-50 dark:bg-slate-800 rounded-lg p-3 flex items-start gap-2 text-left">
+            {emailEnviado && <Mail size={16} className="flex-shrink-0 mt-0.5" aria-hidden="true" />}
+            <span>
+              {emailEnviado
+                ? 'Te enviamos un correo con tu contraseña temporal para que puedas dar seguimiento a tus citas.'
+                : 'Creamos tu cuenta, pero no pudimos enviarte el correo con tu contraseña. Contacta a la clínica para recuperarla.'}
+            </span>
           </p>
         )}
-        <button
-          onClick={() => navigate('/mis-citas')}
-          className="mt-6 px-6 py-2.5 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition"
-        >
+        <button onClick={() => navigate('/mis-citas')} className="btn-primary mt-6">
           Ver mis citas
         </button>
       </div>
@@ -111,20 +110,18 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
         <StepHeader doctorNombre={doctorNombre} fecha={fecha} horaInicio={horaInicio} onBack={onBack} />
         <form onSubmit={handleExistingPatientSubmit} className="mt-5 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">Motivo de consulta (opcional)</label>
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+              Motivo de consulta (opcional)
+            </label>
             <textarea
               value={motivoConsulta}
               onChange={(e) => setMotivoConsulta(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+              className="input-field"
               rows={3}
             />
           </div>
           {error && <Alert>{error}</Alert>}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="px-6 py-2.5 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
-          >
+          <button type="submit" disabled={submitting} className="btn-primary disabled:opacity-50">
             {submitting ? 'Agendando...' : 'Confirmar cita'}
           </button>
         </form>
@@ -133,13 +130,13 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
   }
 
   if (user) {
-    return <div className="text-slate-600">Solo los pacientes pueden agendar citas desde esta pantalla.</div>;
+    return <div className="text-slate-600 dark:text-slate-300">Solo los pacientes pueden agendar citas desde esta pantalla.</div>;
   }
 
   return (
     <div>
       <StepHeader doctorNombre={doctorNombre} fecha={fecha} horaInicio={horaInicio} onBack={onBack} />
-      <p className="text-slate-500 mt-1 text-sm">
+      <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">
         Como es tu primera vez, cuéntanos de ti. Con estos datos creamos tu cuenta y te enviamos por correo tu
         contraseña de acceso para futuras citas y seguimiento — no necesitas inventar una.
       </p>
@@ -159,12 +156,8 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
               required
             />
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">Sexo</label>
-              <select
-                value={form.sexo}
-                onChange={update('sexo')}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-              >
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Sexo</label>
+              <select value={form.sexo} onChange={update('sexo')} className="input-field">
                 <option value="femenino">Femenino</option>
                 <option value="masculino">Masculino</option>
                 <option value="otro">Otro</option>
@@ -192,21 +185,18 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
         </FormSection>
 
         <FormSection title="Tu consulta">
-          <label className="block text-sm font-medium text-slate-600 mb-1">Motivo de consulta (opcional)</label>
-          <textarea
-            value={form.motivoConsulta}
-            onChange={update('motivoConsulta')}
-            className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-            rows={3}
-          />
+          <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+            Motivo de consulta (opcional)
+          </label>
+          <textarea value={form.motivoConsulta} onChange={update('motivoConsulta')} className="input-field" rows={3} />
         </FormSection>
 
-        <label className="flex items-start gap-2 text-sm text-slate-600 bg-indigo-50/60 rounded-xl p-3">
+        <label className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-navy-50/60 dark:bg-navy-900/40 rounded-lg p-3">
           <input
             type="checkbox"
             checked={form.avisoPrivacidadAceptado}
             onChange={update('avisoPrivacidadAceptado')}
-            className="mt-1 accent-indigo-600"
+            className="mt-1 accent-navy-700"
           />
           <span>
             Acepto el aviso de privacidad y el manejo de mis datos personales y de salud conforme a la
@@ -219,7 +209,7 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
         <button
           type="submit"
           disabled={submitting || !form.avisoPrivacidadAceptado}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
+          className="btn-primary w-full sm:w-auto disabled:opacity-50"
         >
           {submitting ? 'Agendando...' : 'Crear cuenta y agendar cita'}
         </button>
@@ -230,15 +220,19 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
 
 function StepHeader({ doctorNombre, fecha, horaInicio, onBack }) {
   return (
-    <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100">
+    <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-700">
       <div>
-        <h3 className="text-lg font-bold text-navy-900">Confirma tu cita</h3>
-        <p className="text-slate-500 text-sm mt-1">
+        <h3 className="text-lg font-bold text-navy-900 dark:text-white">Confirma tu cita</h3>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
           {doctorNombre} · {fecha} a las {horaInicio.slice(0, 5)}
         </p>
       </div>
       {onBack && (
-        <button type="button" onClick={onBack} className="text-sm text-indigo-600 hover:underline whitespace-nowrap">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline whitespace-nowrap"
+        >
           Cambiar horario
         </button>
       )}
@@ -249,7 +243,7 @@ function StepHeader({ doctorNombre, fecha, horaInicio, onBack }) {
 function FormSection({ title, children }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-500 mb-2">{title}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-navy-600 dark:text-navy-300 mb-2">{title}</p>
       {children}
     </div>
   );
@@ -257,7 +251,7 @@ function FormSection({ title, children }) {
 
 function Alert({ children }) {
   return (
-    <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+    <div className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 rounded-lg px-3 py-2.5">
       <span className="font-bold">!</span>
       <span>{children}</span>
     </div>
@@ -267,11 +261,8 @@ function Alert({ children }) {
 function Field({ label, ...props }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-      <input
-        {...props}
-        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-      />
+      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+      <input {...props} className="input-field" />
     </div>
   );
 }

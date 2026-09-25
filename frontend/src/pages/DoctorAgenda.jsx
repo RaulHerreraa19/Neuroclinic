@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Bell, ChevronLeft, ChevronRight, Mail, Phone, Plus, Wallet } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { listDoctorAppointments, listSchedules } from '../api/doctors';
@@ -16,11 +17,11 @@ import { ESTADO_STYLES, ESTADO_LABELS } from '../utils/appointmentStatus';
 const DAY_LABELS_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const HOUR_HEIGHT = 64; // px — calendario grande, un vistazo claro de bloques por hora
 const BLOCK_STYLES = {
-  pendiente: 'bg-amber-50 border-amber-400 text-amber-900',
-  confirmada: 'bg-indigo-50 border-indigo-500 text-indigo-900',
-  cancelada: 'bg-slate-100 border-slate-400 text-slate-500 line-through',
-  completada: 'bg-emerald-50 border-emerald-500 text-emerald-900',
-  no_asistio: 'bg-red-50 border-red-400 text-red-900',
+  pendiente: 'bg-amber-50 dark:bg-amber-950/40 border-amber-400 text-amber-900 dark:text-amber-300',
+  confirmada: 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 text-indigo-900 dark:text-indigo-300',
+  cancelada: 'bg-slate-100 dark:bg-slate-800 border-slate-400 text-slate-500 dark:text-slate-400 line-through',
+  completada: 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-300',
+  no_asistio: 'bg-red-50 dark:bg-red-950/40 border-red-400 text-red-900 dark:text-red-300',
 };
 const STATUS_ACTIONS = [
   { estado: 'confirmada', label: 'Confirmar' },
@@ -165,68 +166,78 @@ export default function DoctorAgenda() {
             <button
               type="button"
               onClick={() => setNewAppointment({ fecha: today, initialMinutes: null })}
-              className="px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition"
+              className="btn-primary text-sm"
             >
-              + Nueva cita
+              <Plus size={16} aria-hidden="true" /> Nueva cita
             </button>
             <button
               type="button"
               onClick={() => setWeekStart(startOfWeek(today))}
-              className="px-4 py-2 rounded-full text-sm font-medium border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-700 transition"
+              className="px-4 py-2 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-navy-300 dark:hover:border-navy-500 hover:text-navy-700 dark:hover:text-white transition"
             >
               Hoy
             </button>
             <button
               type="button"
               onClick={() => setWeekStart((w) => addDays(w, -7))}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-indigo-600 hover:bg-indigo-50 transition"
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
               aria-label="Semana anterior"
             >
-              ‹
+              <ChevronLeft size={18} />
             </button>
-            <p className="text-sm font-semibold text-navy-900 capitalize w-40 text-center">{formatWeekRange(weekStart)}</p>
+            <p className="text-sm font-semibold text-navy-900 dark:text-white capitalize w-40 text-center">
+              {formatWeekRange(weekStart)}
+            </p>
             <button
               type="button"
               onClick={() => setWeekStart((w) => addDays(w, 7))}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-indigo-600 hover:bg-indigo-50 transition"
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
               aria-label="Semana siguiente"
             >
-              ›
+              <ChevronRight size={18} />
             </button>
           </div>
         }
       />
 
       {tomorrowCount > 0 && (
-        <div className="mb-4 flex items-center gap-2.5 rounded-2xl bg-indigo-50 border border-indigo-100 px-4 py-3 text-sm text-indigo-800">
-          <span aria-hidden="true">🔔</span>
+        <div className="mb-4 flex items-center gap-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 px-4 py-3 text-sm text-indigo-800 dark:text-indigo-300">
+          <Bell size={16} aria-hidden="true" className="flex-shrink-0" />
           Mañana tienes <strong>{tomorrowCount}</strong> paciente{tomorrowCount === 1 ? '' : 's'} agendado{tomorrowCount === 1 ? '' : 's'}.
         </div>
       )}
 
-      {loading && <p className="text-slate-500">Cargando...</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400">Cargando...</p>}
 
       {!loading && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="card-surface overflow-hidden">
           <div className="overflow-x-auto">
             <div className="min-w-[820px]">
               {/* Encabezado de días */}
               <div className="grid" style={{ gridTemplateColumns: '64px repeat(7, minmax(0,1fr))' }}>
-                <div className="border-b border-slate-100" />
+                <div className="border-b border-slate-100 dark:border-slate-700" />
                 {weekDays.map((fecha) => {
                   const isToday = fecha === today;
                   const d = new Date(`${fecha}T00:00:00Z`);
                   return (
                     <div
                       key={fecha}
-                      className={`text-center py-3 border-b border-l border-slate-100 ${isToday ? 'bg-indigo-50/70' : ''}`}
+                      className={`text-center py-3 border-b border-l border-slate-100 dark:border-slate-700 ${
+                        isToday ? 'bg-indigo-50/70 dark:bg-indigo-950/30' : ''
+                      }`}
                     >
-                      <p className="text-[11px] font-medium text-slate-400">{DAY_LABELS_SHORT[d.getUTCDay()]}</p>
-                      <p className={`text-lg font-bold ${isToday ? 'text-indigo-600' : 'text-navy-900'}`}>
+                      <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                        {DAY_LABELS_SHORT[d.getUTCDay()]}
+                      </p>
+                      <p
+                        className={`text-lg font-bold ${
+                          isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-navy-900 dark:text-white'
+                        }`}
+                      >
                         {d.getUTCDate()}
                       </p>
                       {(appointmentsByDay[fecha]?.length || 0) > 0 && (
-                        <p className="text-[10px] text-emerald-600 font-semibold">
+                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
                           {appointmentsByDay[fecha].length} cita{appointmentsByDay[fecha].length === 1 ? '' : 's'}
                         </p>
                       )}
@@ -241,7 +252,7 @@ export default function DoctorAgenda() {
                   {hours.map((h, i) => (
                     <div
                       key={h}
-                      className="absolute right-2 text-[11px] text-slate-400 -translate-y-1/2"
+                      className="absolute right-2 text-[11px] text-slate-400 dark:text-slate-500 -translate-y-1/2"
                       style={{ top: i * HOUR_HEIGHT }}
                     >
                       {String(h).padStart(2, '0')}:00
@@ -255,15 +266,15 @@ export default function DoctorAgenda() {
                     <div
                       key={fecha}
                       onClick={handleColumnClick(fecha)}
-                      className={`relative border-l border-slate-100 cursor-pointer hover:bg-indigo-50/20 transition-colors ${
-                        isToday ? 'bg-indigo-50/30' : ''
+                      className={`relative border-l border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 transition-colors ${
+                        isToday ? 'bg-indigo-50/30 dark:bg-indigo-950/20' : ''
                       }`}
                       style={{ height: gridHeight }}
                     >
                       {hours.map((h, i) => (
                         <div
                           key={h}
-                          className="absolute left-0 right-0 border-t border-slate-100 pointer-events-none"
+                          className="absolute left-0 right-0 border-t border-slate-100 dark:border-slate-700 pointer-events-none"
                           style={{ top: i * HOUR_HEIGHT }}
                         />
                       ))}
@@ -333,13 +344,17 @@ function PatientDetail({ appointment, onStatusChange }) {
 
   return (
     <div>
-      <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+      <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
         <Avatar nombre={patient.nombre} apellido={patient.apellidoPaterno} size="lg" />
         <div className="min-w-0">
-          <p className="font-bold text-navy-900 text-lg truncate">
+          <p className="font-bold text-navy-900 dark:text-white text-lg truncate">
             {patient.nombre} {patient.apellidoPaterno} {patient.apellidoMaterno}
           </p>
-          <span className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full capitalize mt-1 ${ESTADO_STYLES[appointment.estado] || ''}`}>
+          <span
+            className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full capitalize mt-1 ${
+              ESTADO_STYLES[appointment.estado] || ''
+            }`}
+          >
             {ESTADO_LABELS[appointment.estado] || appointment.estado}
           </span>
         </div>
@@ -349,21 +364,22 @@ function PatientDetail({ appointment, onStatusChange }) {
         <Section title="Contacto">
           <div className="flex flex-wrap items-center gap-2">
             {patient.telefono ? (
-              <a
-                href={`tel:${patient.telefono}`}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition"
-              >
-                📞 Llamar {patient.telefono}
+              <a href={`tel:${patient.telefono}`} className="btn-primary text-sm !bg-emerald-600 hover:!bg-emerald-700">
+                <Phone size={15} aria-hidden="true" /> Llamar {patient.telefono}
               </a>
             ) : (
-              <p className="text-sm text-slate-400">Sin teléfono registrado.</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">Sin teléfono registrado.</p>
             )}
           </div>
-          {patient.email && <p className="text-sm text-slate-500 mt-2">✉️ {patient.email}</p>}
+          {patient.email && (
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
+              <Mail size={14} aria-hidden="true" /> {patient.email}
+            </p>
+          )}
         </Section>
 
         <Section title="Datos personales">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
             {age !== null ? `${age} años` : 'Edad no registrada'}
             {profile.direccion ? ` · ${profile.direccion}` : ''}
           </p>
@@ -372,13 +388,15 @@ function PatientDetail({ appointment, onStatusChange }) {
         {(profile.contactoEmergenciaNombre || profile.contactoEmergenciaTelefono) && (
           <Section title="Contacto de emergencia">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm text-slate-600">{profile.contactoEmergenciaNombre || 'Sin nombre registrado'}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                {profile.contactoEmergenciaNombre || 'Sin nombre registrado'}
+              </p>
               {profile.contactoEmergenciaTelefono && (
                 <a
                   href={`tel:${profile.contactoEmergenciaTelefono}`}
-                  className="text-sm text-indigo-600 font-medium hover:underline whitespace-nowrap"
+                  className="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:underline whitespace-nowrap flex items-center gap-1"
                 >
-                  📞 {profile.contactoEmergenciaTelefono}
+                  <Phone size={13} aria-hidden="true" /> {profile.contactoEmergenciaTelefono}
                 </a>
               )}
             </div>
@@ -387,23 +405,23 @@ function PatientDetail({ appointment, onStatusChange }) {
 
         {appointment.motivoConsulta && (
           <Section title="Motivo de consulta">
-            <p className="text-sm text-slate-600">{appointment.motivoConsulta}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300">{appointment.motivoConsulta}</p>
           </Section>
         )}
 
         {appointment.estado === 'completada' && (
           <Section title="Cobro">
             {payment ? (
-              <p className="text-sm text-emerald-700 font-medium">
+              <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">
                 Cobrado: ${Number(payment.monto).toFixed(2)} MXN · {payment.concepto}
               </p>
             ) : (
               <button
                 type="button"
                 onClick={() => setChargeOpen(true)}
-                className="px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition"
+                className="btn-primary text-sm !bg-emerald-600 hover:!bg-emerald-700"
               >
-                💰 Cobrar consulta
+                <Wallet size={15} aria-hidden="true" /> Cobrar consulta
               </button>
             )}
           </Section>
@@ -417,18 +435,18 @@ function PatientDetail({ appointment, onStatusChange }) {
         onCharged={() => getAppointmentPayment(appointment.id).then(setPayment)}
       />
 
-      <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3">
         <Link
           to={`/pacientes/${patient.id}`}
           state={{ patientName: `${patient.nombre ?? ''} ${patient.apellidoPaterno ?? ''}` }}
-          className="text-sm text-indigo-600 font-medium hover:underline"
+          className="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:underline"
         >
           Ver expediente clínico →
         </Link>
         <select
           onChange={(e) => e.target.value && onStatusChange(appointment.id, e.target.value)}
           defaultValue=""
-          className="text-sm border border-slate-200 rounded-full px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400"
         >
           <option value="" disabled>
             Cambiar estado
@@ -447,7 +465,7 @@ function PatientDetail({ appointment, onStatusChange }) {
 function Section({ title, children }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-500 mb-1.5">{title}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-navy-600 dark:text-navy-300 mb-1.5">{title}</p>
       {children}
     </div>
   );

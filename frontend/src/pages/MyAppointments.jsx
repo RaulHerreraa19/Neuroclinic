@@ -5,6 +5,7 @@ import { fetchMyReminders } from '../api/auth';
 import AppointmentCard from '../components/AppointmentCard';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
+import { Bell, CalendarDays } from 'lucide-react';
 
 export default function MyAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -40,18 +41,15 @@ export default function MyAppointments() {
         title="Mis citas"
         subtitle="Historial y próximas citas con tus doctores."
         action={
-          <Link
-            to="/"
-            className="px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition"
-          >
+          <Link to="/" className="btn-primary text-sm">
             + Agendar nueva cita
           </Link>
         }
       />
 
       {tomorrowAppointment && (
-        <div className="mb-6 flex items-center gap-2.5 rounded-2xl bg-indigo-50 border border-indigo-100 px-4 py-3 text-sm text-indigo-800">
-          <span aria-hidden="true">🔔</span>
+        <div className="mb-6 flex items-center gap-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 px-4 py-3 text-sm text-indigo-800 dark:text-indigo-300">
+          <Bell size={16} aria-hidden="true" className="flex-shrink-0" />
           Mañana tienes cita con {tomorrowAppointment.doctor?.nombre} {tomorrowAppointment.doctor?.apellidoPaterno} a las{' '}
           {tomorrowAppointment.horaInicio.slice(0, 5)}.
         </div>
@@ -62,7 +60,7 @@ export default function MyAppointments() {
         <TabButton label={`Pasadas (${pasadas.length})`} active={tab === 'pasadas'} onClick={() => setTab('pasadas')} />
       </div>
 
-      {loading && <p className="text-slate-500">Cargando...</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400">Cargando...</p>}
 
       <div className="space-y-3">
         {visibles.map((a) => (
@@ -78,7 +76,7 @@ export default function MyAppointments() {
               ['pendiente', 'confirmada'].includes(a.estado) && (
                 <button
                   onClick={() => handleCancel(a.id)}
-                  className="text-sm text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-full transition"
+                  className="text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-1.5 rounded-lg transition"
                 >
                   Cancelar
                 </button>
@@ -88,7 +86,7 @@ export default function MyAppointments() {
         ))}
         {!loading && visibles.length === 0 && (
           <EmptyState
-            icon="🗓️"
+            icon={CalendarDays}
             message={
               tab === 'proximas'
                 ? 'No tienes citas próximas. Agenda la primera desde la página de inicio.'
@@ -107,7 +105,9 @@ function TabButton({ label, active, onClick }) {
       type="button"
       onClick={onClick}
       className={`text-sm px-4 py-2 rounded-full border transition ${
-        active ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
+        active
+          ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700'
+          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-navy-300 dark:hover:border-navy-600'
       }`}
     >
       {label}

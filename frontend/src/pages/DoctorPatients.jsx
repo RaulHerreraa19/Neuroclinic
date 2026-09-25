@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import DoctorLayout from '../components/DoctorLayout';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
+import { UserRound } from 'lucide-react';
 import Avatar from '../components/Avatar';
 import Modal from '../components/Modal';
 
@@ -58,60 +59,53 @@ export default function DoctorPatients() {
               placeholder="Buscar por nombre o correo..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full sm:w-56 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="input-field w-full sm:w-56 text-sm"
             />
-            <button
-              type="button"
-              onClick={() => setCreateOpen(true)}
-              className="px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition whitespace-nowrap"
-            >
+            <button type="button" onClick={() => setCreateOpen(true)} className="btn-primary text-sm whitespace-nowrap">
               + Nuevo paciente
             </button>
           </div>
         }
       />
 
-      {loading && <p className="text-slate-500">Cargando...</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400">Cargando...</p>}
 
       <div className="grid sm:grid-cols-2 gap-4">
         {visibles.map((p) => (
-          <div
-            key={p.id}
-            className={`bg-white rounded-2xl border p-4 shadow-sm hover:shadow-md transition ${
-              p.isActive ? 'border-slate-100' : 'border-slate-100 opacity-60'
-            }`}
-          >
+          <div key={p.id} className={`card-surface p-4 hover:shadow-md transition ${p.isActive ? '' : 'opacity-60'}`}>
             <div className="flex items-start gap-3">
               <Avatar nombre={p.nombre} apellido={p.apellidoPaterno} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold text-navy-900 truncate">
+                  <p className="font-semibold text-navy-900 dark:text-white truncate">
                     {p.nombre} {p.apellidoPaterno} {p.apellidoMaterno}
                   </p>
                   <span
                     className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${
-                      p.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'
+                      p.isActive
+                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
+                        : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400'
                     }`}
                   >
                     {p.isActive ? 'Activo' : 'Inactivo'}
                   </span>
                 </div>
-                <p className="text-sm text-slate-500 truncate">{p.email}</p>
-                {p.telefono && <p className="text-sm text-slate-400 truncate">{p.telefono}</p>}
+                <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{p.email}</p>
+                {p.telefono && <p className="text-sm text-slate-400 dark:text-slate-500 truncate">{p.telefono}</p>}
               </div>
             </div>
             <div className="mt-3 flex items-center gap-4 pl-14">
               <button
                 type="button"
                 onClick={() => setEditingPatient(p)}
-                className="text-sm text-indigo-600 font-medium hover:underline"
+                className="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:underline"
               >
                 Editar
               </button>
               <Link
                 to={`/pacientes/${p.id}`}
                 state={{ patientName: `${p.nombre} ${p.apellidoPaterno}` }}
-                className="text-sm text-slate-500 hover:text-indigo-600 hover:underline"
+                className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline"
               >
                 Expediente →
               </Link>
@@ -120,7 +114,7 @@ export default function DoctorPatients() {
         ))}
         {!loading && visibles.length === 0 && (
           <div className="sm:col-span-2">
-            <EmptyState icon="🧑‍⚕️" message={query ? 'No hay pacientes que coincidan con tu búsqueda.' : 'Todavía no tienes pacientes registrados.'} />
+            <EmptyState icon={UserRound} message={query ? 'No hay pacientes que coincidan con tu búsqueda.' : 'Todavía no tienes pacientes registrados.'} />
           </div>
         )}
       </div>
@@ -197,12 +191,8 @@ function CreatePatientModal({ open, onClose, onCreated }) {
             required
           />
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">Sexo</label>
-            <select
-              value={form.sexo}
-              onChange={update('sexo')}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            >
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Sexo</label>
+            <select value={form.sexo} onChange={update('sexo')} className="input-field">
               <option value="femenino">Femenino</option>
               <option value="masculino">Masculino</option>
               <option value="otro">Otro</option>
@@ -224,23 +214,19 @@ function CreatePatientModal({ open, onClose, onCreated }) {
           />
         </div>
 
-        <label className="flex items-start gap-2 text-sm text-slate-600 bg-indigo-50/60 rounded-xl p-3">
+        <label className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-navy-50/60 dark:bg-navy-900/40 rounded-lg p-3">
           <input
             type="checkbox"
             checked={form.avisoPrivacidadAceptado}
             onChange={update('avisoPrivacidadAceptado')}
-            className="mt-1 accent-indigo-600"
+            className="mt-1 accent-navy-700"
           />
           <span>Confirmo que el paciente aceptó el aviso de privacidad (en persona o por teléfono).</span>
         </label>
 
         {error && <Alert>{error}</Alert>}
 
-        <button
-          type="submit"
-          disabled={submitting || !form.avisoPrivacidadAceptado}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
-        >
+        <button type="submit" disabled={submitting || !form.avisoPrivacidadAceptado} className="btn-primary w-full sm:w-auto disabled:opacity-50">
           {submitting ? 'Registrando...' : 'Registrar paciente'}
         </button>
       </form>
@@ -319,16 +305,17 @@ function EditPatientModal({ patient, onClose, onSaved }) {
           />
         </div>
 
-        <label className="flex items-center justify-between gap-3 bg-slate-50 rounded-xl p-3">
-          <span className="text-sm text-slate-600">
-            Paciente <span className="font-semibold text-navy-900">{form.isActive ? 'activo' : 'inactivo'}</span>
+        <label className="flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
+          <span className="text-sm text-slate-600 dark:text-slate-300">
+            Paciente{' '}
+            <span className="font-semibold text-navy-900 dark:text-white">{form.isActive ? 'activo' : 'inactivo'}</span>
           </span>
           <button
             type="button"
             role="switch"
             aria-checked={form.isActive}
             onClick={() => setForm((f) => ({ ...f, isActive: !f.isActive }))}
-            className={`relative w-11 h-6 rounded-full transition ${form.isActive ? 'bg-emerald-500' : 'bg-slate-300'}`}
+            className={`relative w-11 h-6 rounded-full transition ${form.isActive ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}
           >
             <span
               className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
@@ -340,11 +327,7 @@ function EditPatientModal({ patient, onClose, onSaved }) {
 
         {error && <Alert>{error}</Alert>}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
-        >
+        <button type="submit" disabled={submitting} className="btn-primary w-full sm:w-auto disabled:opacity-50">
           {submitting ? 'Guardando...' : 'Guardar cambios'}
         </button>
       </form>
@@ -354,7 +337,7 @@ function EditPatientModal({ patient, onClose, onSaved }) {
 
 function Alert({ children }) {
   return (
-    <p className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+    <p className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 rounded-lg px-3 py-2.5">
       <span className="font-bold">!</span> {children}
     </p>
   );
@@ -363,11 +346,8 @@ function Alert({ children }) {
 function Field({ label, ...props }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-      <input
-        {...props}
-        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-      />
+      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+      <input {...props} className="input-field" />
     </div>
   );
 }

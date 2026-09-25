@@ -6,6 +6,7 @@ import Avatar from '../components/Avatar';
 import AdminLayout from '../components/AdminLayout';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
+import { Stethoscope } from 'lucide-react';
 import Modal from '../components/Modal';
 
 const emptyForm = {
@@ -64,37 +65,30 @@ export default function AdminDoctors() {
         title="Doctores"
         subtitle={`${doctors.length} doctor${doctors.length === 1 ? '' : 'es'} activo${doctors.length === 1 ? '' : 's'}.`}
         action={
-          <button
-            type="button"
-            onClick={() => setModalOpen(true)}
-            className="px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition"
-          >
+          <button type="button" onClick={() => setModalOpen(true)} className="btn-primary text-sm">
             + Nuevo doctor
           </button>
         }
       />
 
-      {loading && <p className="text-slate-500">Cargando...</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400">Cargando...</p>}
 
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {doctors.map((d) => (
-          <div
-            key={d.id}
-            className="flex gap-3 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm hover:shadow-md transition"
-          >
+          <div key={d.id} className="flex gap-3 card-surface p-4 hover:shadow-md transition">
             <Avatar nombre={d.user?.nombre} apellido={d.user?.apellidoPaterno} src={resolveUploadUrl(d.user?.avatarUrl)} />
             <div className="min-w-0">
-              <p className="font-semibold text-navy-900 truncate">
+              <p className="font-semibold text-navy-900 dark:text-white truncate">
                 {d.user?.nombre} {d.user?.apellidoPaterno} {d.user?.apellidoMaterno}
               </p>
-              <p className="text-sm text-indigo-600 truncate">{d.especialidad}</p>
-              {d.biografia && <p className="text-sm text-slate-500 mt-1 line-clamp-2">{d.biografia}</p>}
+              <p className="text-sm text-indigo-600 dark:text-indigo-400 truncate">{d.especialidad}</p>
+              {d.biografia && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{d.biografia}</p>}
             </div>
           </div>
         ))}
         {!loading && doctors.length === 0 && (
           <div className="sm:col-span-2 xl:col-span-3">
-            <EmptyState icon="🩺" message="Todavía no hay doctores dados de alta." />
+            <EmptyState icon={Stethoscope} message="Todavía no hay doctores dados de alta." />
           </div>
         )}
       </div>
@@ -130,26 +124,19 @@ export default function AdminDoctors() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">Biografía (opcional)</label>
-            <textarea
-              value={form.biografia}
-              onChange={update('biografia')}
-              rows={3}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-            />
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+              Biografía (opcional)
+            </label>
+            <textarea value={form.biografia} onChange={update('biografia')} rows={3} className="input-field" />
           </div>
 
           {error && (
-            <p className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
+            <p className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 rounded-lg px-3 py-2.5">
               <span className="font-bold">!</span> {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
-          >
+          <button type="submit" disabled={submitting} className="btn-primary w-full sm:w-auto disabled:opacity-50">
             {submitting ? 'Creando...' : 'Crear doctor'}
           </button>
         </form>
@@ -161,11 +148,8 @@ export default function AdminDoctors() {
 function Field({ label, ...props }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
-      <input
-        {...props}
-        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-      />
+      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+      <input {...props} className="input-field" />
     </div>
   );
 }

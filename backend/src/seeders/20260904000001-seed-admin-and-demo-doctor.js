@@ -6,7 +6,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const adminId = uuidv4();
     const doctorId = uuidv4();
-    const passwordHash = await bcrypt.hash('CambiarEste123!', 10);
+    const passwordHash = await bcrypt.hash('Nueroclinic12345', 10);
 
     // Insert crudo (no bulkInsert) para poder castear `roles` como ARRAY(ENUM) en el mismo
     // statement: bulkInsert no sabe formatear ese tipo y `roles` es NOT NULL.
@@ -20,8 +20,8 @@ module.exports = {
         replacements: {
           adminId,
           doctorId,
-          adminEmail: 'admin@neuroclinic.test',
-          doctorEmail: 'doctor.demo@neuroclinic.test',
+          adminEmail: 'admin@neuroclinic.com',
+          doctorEmail: 'doctor@neuroclinic.com',
           passwordHash,
         },
         type: Sequelize.QueryTypes.INSERT,
@@ -45,7 +45,7 @@ module.exports = {
   down: async (queryInterface) => {
     await queryInterface.bulkDelete('doctor_profiles', null, {});
     await queryInterface.bulkDelete('users', {
-      email: ['admin@neuroclinic.test', 'doctor.demo@neuroclinic.test'],
+      email: ['admin@neuroclinic.com', 'doctor@neuroclinic.com'],
     });
   },
 };

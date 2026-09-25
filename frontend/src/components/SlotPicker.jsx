@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { CalendarDays, CalendarX, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAvailability } from '../api/doctors';
 
 const WEEKDAY_LABELS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -88,40 +89,40 @@ export default function SlotPicker({ doctorId, onSelect, selected }) {
 
   return (
     <div className="grid md:grid-cols-2 gap-4">
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+      <div className="card-surface p-5">
         <div className="flex items-center justify-between mb-4">
           <button
             type="button"
             onClick={goPrevMonth}
             disabled={!canGoPrev}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-indigo-600 hover:bg-indigo-50 disabled:opacity-30 disabled:hover:bg-transparent transition"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 disabled:opacity-30 disabled:hover:bg-transparent transition"
             aria-label="Mes anterior"
           >
-            ‹
+            <ChevronLeft size={18} />
           </button>
-          <p className="font-semibold text-navy-900">
+          <p className="font-semibold text-navy-900 dark:text-white">
             {MONTH_LABELS[visible.m]} {visible.y}
           </p>
           <button
             type="button"
             onClick={goNextMonth}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-indigo-600 hover:bg-indigo-50 transition"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
             aria-label="Mes siguiente"
           >
-            ›
+            <ChevronRight size={18} />
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-slate-400 mb-2">
+        <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-slate-400 dark:text-slate-500 mb-2">
           {WEEKDAY_LABELS.map((w) => (
             <div key={w}>{w}</div>
           ))}
         </div>
 
         {loading ? (
-          <p className="text-slate-500 text-sm py-10 text-center">Cargando calendario...</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm py-10 text-center">Cargando calendario...</p>
         ) : error ? (
-          <p className="text-red-600 text-sm py-10 text-center">{error}</p>
+          <p className="text-red-600 dark:text-red-400 text-sm py-10 text-center">{error}</p>
         ) : (
           <div className="grid grid-cols-7 gap-1">
             {weeks.flat().map((day, idx) => {
@@ -140,12 +141,12 @@ export default function SlotPicker({ doctorId, onSelect, selected }) {
                   onClick={() => setActiveDate(fecha)}
                   className={`h-9 rounded-full text-sm transition ${
                     isActive
-                      ? 'bg-indigo-600 text-white font-semibold shadow'
+                      ? 'bg-navy-900 dark:bg-navy-700 text-white font-semibold shadow'
                       : disabled
-                      ? 'text-slate-300 cursor-not-allowed'
+                      ? 'text-slate-300 dark:text-slate-700 cursor-not-allowed'
                       : isToday
-                      ? 'text-coral-500 font-semibold hover:bg-indigo-50'
-                      : 'text-slate-700 hover:bg-indigo-50'
+                      ? 'text-coral-500 dark:text-coral-400 font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-950/40'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40'
                   }`}
                 >
                   {day}
@@ -156,22 +157,22 @@ export default function SlotPicker({ doctorId, onSelect, selected }) {
         )}
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+      <div className="card-surface p-5">
         {!activeDate ? (
-          <div className="h-full flex flex-col items-center justify-center text-center py-10 text-slate-400">
-            <span className="text-4xl mb-3">🗓️</span>
+          <div className="h-full flex flex-col items-center justify-center text-center py-10 text-slate-400 dark:text-slate-500">
+            <CalendarDays size={36} className="mb-3" aria-hidden="true" />
             <p className="text-sm max-w-[220px]">
               Haz clic en un día del calendario para ver las horas disponibles.
             </p>
           </div>
         ) : activeSlots.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center py-10 text-slate-400">
-            <span className="text-4xl mb-3">🚫</span>
+          <div className="h-full flex flex-col items-center justify-center text-center py-10 text-slate-400 dark:text-slate-500">
+            <CalendarX size={36} className="mb-3" aria-hidden="true" />
             <p className="text-sm">No hay horarios disponibles este día.</p>
           </div>
         ) : (
           <div key={activeDate} className="animate-fade-in">
-            <p className="font-semibold text-navy-900 mb-3 capitalize">{formatLongDate(activeDate)}</p>
+            <p className="font-semibold text-navy-900 dark:text-white mb-3 capitalize">{formatLongDate(activeDate)}</p>
             <div className="grid grid-cols-3 gap-2">
               {activeSlots.map((slot) => {
                 const isSelected = selected?.fecha === activeDate && selected?.horaInicio === slot.horaInicio;
@@ -180,10 +181,10 @@ export default function SlotPicker({ doctorId, onSelect, selected }) {
                     key={slot.horaInicio}
                     type="button"
                     onClick={() => onSelect({ fecha: activeDate, horaInicio: slot.horaInicio })}
-                    className={`px-3 py-2 rounded-xl text-sm border transition ${
+                    className={`px-3 py-2 rounded-lg text-sm border transition ${
                       isSelected
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow'
-                        : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-400 hover:text-indigo-700'
+                        ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700 shadow'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-navy-400 dark:hover:border-navy-500 hover:text-navy-700 dark:hover:text-white'
                     }`}
                   >
                     {slot.horaInicio.slice(0, 5)}
