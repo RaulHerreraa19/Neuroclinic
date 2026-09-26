@@ -6,17 +6,23 @@ function signToken(user) {
   });
 }
 
-function setAuthCookie(res, token) {
-  res.cookie('token', token, {
+// Mismas opciones para crear y borrar la cookie: si difieren (path, secure, sameSite),
+// algunos navegadores ignoran el borrado y la sesión sobrevive al logout.
+function cookieOptions() {
+  return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+    path: '/',
+  };
+}
+
+function setAuthCookie(res, token) {
+  res.cookie('token', token, { ...cookieOptions(), maxAge: 7 * 24 * 60 * 60 * 1000 });
 }
 
 function clearAuthCookie(res) {
-  res.clearCookie('token');
+  res.clearCookie('token', cookieOptions());
 }
 
 module.exports = { signToken, setAuthCookie, clearAuthCookie };

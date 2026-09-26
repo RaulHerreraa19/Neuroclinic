@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { uploadAvatar } from '../api/auth';
+import { changePassword, uploadAvatar } from '../api/auth';
 import { getDoctor } from '../api/doctors';
 import { resolveUploadUrl } from '../api/client';
 import Avatar from '../components/Avatar';
@@ -42,7 +42,7 @@ export default function MyProfile() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <PageHeader eyebrow="Tu cuenta" title="Mi perfil" subtitle="Datos personales y foto de perfil." />
+      <PageHeader eyebrow="Tu cuenta" title="Mi perfil" subtitle="Datos personales, foto de perfil y contraseña." />
 
       <div className="grid lg:grid-cols-3 gap-4">
         <div className="card-surface p-5 flex flex-col items-center text-center">
@@ -91,7 +91,70 @@ export default function MyProfile() {
             </dl>
           </div>
         )}
+
+        <ChangePasswordCard />
       </div>
+    </div>
+  );
+}
+
+const EMPTY_PASSWORD_FORM = { currentPassword: '', newPassword: '', confirmPassword: '' };
+
+function ChangePasswordCard() {
+  const { showToast } = useToast();
+  const [form, setForm] = useState(EMPTY_PASSWORD_FORM);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (form.newPassword.length < 8) {
+      setError('La nueva contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+    if (form.newPassword !== form.confirmPassword) {
+      setError('Las contraseñas nuevas no coinciden.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await changePassword({ currentPassword: form.currentPassword, newPassword: form.newPassword });
+      setForm(EMPTY_PASSWORD_FORM);
+      showToast('Contraseña actualizada.', { type: 'success' });
+    } catch (err) {
+      const data = err.response?.data;
+      setError(data?.details?.[0]?.msg || data?.error || 'No se pudo cambiar la contraseña.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="card-surface p-5 lg:col-span-3">
+      <h2 className="font-semibold text-navy-900 dark:text-white mb-3">Cambiar contraseña</h2>
+      <div className="grid sm:grid-cols-3 gap-3">
+        <PasswordField label="Contraseña actual" name="currentPassword" value={form.currentPassword} onChange={handleChange} autoComplete="current-password" />
+        <PasswordField label="Nueva contraseña" name="newPassword" value={form.newPassword} onChange={handleChange} autoComplete="new-password" />
+        <PasswordField label="Repite la nueva contraseña" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} autoComplete="new-password" />
+      </div>
+      {error && <p className="text-sm text-red-600 dark:text-red-400 mt-3">{error}</p>}
+      <div className="flex justify-end mt-4">
+        <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50">
+          {saving ? 'Guardando...' : 'Actualizar contraseña'}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function PasswordField({ label, ...props }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{label}</label>
+      <input type="password" required className="input-field" {...props} />
     </div>
   );
 }

@@ -41,9 +41,19 @@ router.post(
   asyncHandler(authController.login)
 );
 
-router.post('/logout', authenticate, asyncHandler(authController.logout));
+router.post('/logout', asyncHandler(authController.logout));
 router.get('/me', authenticate, asyncHandler(authController.me));
 router.post('/me/avatar', authenticate, uploadAvatar.single('avatar'), asyncHandler(authController.uploadAvatar));
+router.put(
+  '/me/password',
+  authenticate,
+  [
+    body('currentPassword').notEmpty().withMessage('Escribe tu contraseña actual.'),
+    body('newPassword').isLength({ min: 8 }).withMessage('La nueva contraseña debe tener al menos 8 caracteres.'),
+  ],
+  validate,
+  asyncHandler(authController.changePassword)
+);
 router.get('/me/reminders', authenticate, asyncHandler(authController.getMyReminders));
 
 module.exports = router;

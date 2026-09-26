@@ -7,6 +7,9 @@ const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+// En prod el backend está detrás de proxys (Render y el rewrite /api de Vercel).
+app.set('trust proxy', 1);
+
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
   .split(',')
   .map((origin) => origin.trim())

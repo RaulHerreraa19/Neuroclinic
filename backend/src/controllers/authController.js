@@ -241,6 +241,18 @@ async function uploadAvatar(req, res) {
   res.json({ user: sanitizeUser(req.user) });
 }
 
+async function changePassword(req, res) {
+  const { currentPassword, newPassword } = req.body;
+  const valid = await bcrypt.compare(currentPassword, req.user.passwordHash);
+  if (!valid) {
+    return res.status(400).json({ error: 'La contraseña actual es incorrecta.' });
+  }
+
+  await req.user.update({ passwordHash: await bcrypt.hash(newPassword, 10) });
+  await recordAudit({ user: req.user, entidad: 'users', entidadId: req.user.id, accion: 'update', req, detalles: { field: 'password' } });
+  res.status(204).send();
+}
+
 // Aviso al iniciar sesión: no aplica a un usuario que solo es admin (sin rol médico/paciente).
 async function getMyReminders(req, res) {
   if (req.user.hasRole('medico')) {
@@ -252,4 +264,4 @@ async function getMyReminders(req, res) {
   res.json({});
 }
 
-module.exports = { registerPatient, registerPatientByStaff, login, logout, me, uploadAvatar, getMyReminders };
+module.exports = { registerPatient, registerPatientByStaff, login, logout, me, uploadAvatar, changePassword, getMyReminders };

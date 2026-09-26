@@ -6,7 +6,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const adminId = uuidv4();
     const doctorId = uuidv4();
-    const passwordHash = await bcrypt.hash(' ', 10);
+    const passwordHash = await bcrypt.hash('Neuroclinic123', 10);
 
     // Insert crudo (no bulkInsert) para poder castear `roles` como ARRAY(ENUM) en el mismo
     // statement: bulkInsert no sabe formatear ese tipo y `roles` es NOT NULL.

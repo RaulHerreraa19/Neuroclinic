@@ -9,7 +9,8 @@
     "start": "node src/server.js",
     "migrate": "sequelize-cli db:migrate",
     "migrate:undo": "sequelize-cli db:migrate:undo",
-    "seed": "sequelize-cli db:seed:all"
+    "seed": "sequelize-cli db:seed:all",
+    "reset-password": "node scripts/reset-password.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
