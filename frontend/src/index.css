@@ -14,11 +14,6 @@
   .card-surface {
     @apply bg-sand-50 border border-sand-200 rounded-xl shadow-sm dark:bg-slate-800 dark:border-slate-700;
   }
-  /* Calendarios (reserva de cita y agenda del médico): mismo tono arena que la página, para
-     que se integren al fondo en vez de verse como bloques blancos. */
-  .calendar-surface {
-    @apply bg-sand-100 border border-sand-300 rounded-xl shadow-sm dark:bg-slate-800 dark:border-slate-700;
-  }
   .panel-elevated {
     @apply bg-sand-50 rounded-xl shadow-xl dark:bg-slate-800;
   }
