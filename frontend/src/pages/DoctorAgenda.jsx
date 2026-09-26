@@ -173,14 +173,14 @@ export default function DoctorAgenda() {
             <button
               type="button"
               onClick={() => setWeekStart(startOfWeek(today))}
-              className="px-4 py-2 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-navy-300 dark:hover:border-navy-500 hover:text-navy-700 dark:hover:text-white transition"
+              className="px-4 py-2 rounded-lg text-sm font-medium border border-sand-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-navy-300 dark:hover:border-navy-500 hover:text-navy-700 dark:hover:text-white transition"
             >
               Hoy
             </button>
             <button
               type="button"
               onClick={() => setWeekStart((w) => addDays(w, -7))}
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-sand-200 dark:hover:bg-indigo-950/40 transition"
               aria-label="Semana anterior"
             >
               <ChevronLeft size={18} />
@@ -191,7 +191,7 @@ export default function DoctorAgenda() {
             <button
               type="button"
               onClick={() => setWeekStart((w) => addDays(w, 7))}
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400 hover:bg-sand-200 dark:hover:bg-indigo-950/40 transition"
               aria-label="Semana siguiente"
             >
               <ChevronRight size={18} />
@@ -210,19 +210,19 @@ export default function DoctorAgenda() {
       {loading && <p className="text-slate-500 dark:text-slate-400">Cargando...</p>}
 
       {!loading && (
-        <div className="card-surface overflow-hidden">
+        <div className="calendar-surface overflow-hidden">
           <div className="overflow-x-auto">
             <div className="min-w-[820px]">
               {/* Encabezado de días */}
               <div className="grid" style={{ gridTemplateColumns: '64px repeat(7, minmax(0,1fr))' }}>
-                <div className="border-b border-slate-100 dark:border-slate-700" />
+                <div className="border-b border-sand-200 dark:border-slate-700" />
                 {weekDays.map((fecha) => {
                   const isToday = fecha === today;
                   const d = new Date(`${fecha}T00:00:00Z`);
                   return (
                     <div
                       key={fecha}
-                      className={`text-center py-3 border-b border-l border-slate-100 dark:border-slate-700 ${
+                      className={`text-center py-3 border-b border-l border-sand-200 dark:border-slate-700 ${
                         isToday ? 'bg-indigo-50/70 dark:bg-indigo-950/30' : ''
                       }`}
                     >
@@ -266,7 +266,7 @@ export default function DoctorAgenda() {
                     <div
                       key={fecha}
                       onClick={handleColumnClick(fecha)}
-                      className={`relative border-l border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 transition-colors ${
+                      className={`relative border-l border-sand-200 dark:border-slate-700 cursor-pointer hover:bg-sand-200/60 dark:hover:bg-indigo-950/20 transition-colors ${
                         isToday ? 'bg-indigo-50/30 dark:bg-indigo-950/20' : ''
                       }`}
                       style={{ height: gridHeight }}
@@ -274,7 +274,7 @@ export default function DoctorAgenda() {
                       {hours.map((h, i) => (
                         <div
                           key={h}
-                          className="absolute left-0 right-0 border-t border-slate-100 dark:border-slate-700 pointer-events-none"
+                          className="absolute left-0 right-0 border-t border-sand-200 dark:border-slate-700 pointer-events-none"
                           style={{ top: i * HOUR_HEIGHT }}
                         />
                       ))}
@@ -344,7 +344,7 @@ function PatientDetail({ appointment, onStatusChange }) {
 
   return (
     <div>
-      <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
+      <div className="flex items-center gap-3 pb-4 border-b border-sand-200 dark:border-slate-700">
         <Avatar nombre={patient.nombre} apellido={patient.apellidoPaterno} size="lg" />
         <div className="min-w-0">
           <p className="font-bold text-navy-900 dark:text-white text-lg truncate">
@@ -435,7 +435,7 @@ function PatientDetail({ appointment, onStatusChange }) {
         onCharged={() => getAppointmentPayment(appointment.id).then(setPayment)}
       />
 
-      <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-6 pt-4 border-t border-sand-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3">
         <Link
           to={`/pacientes/${patient.id}`}
           state={{ patientName: `${patient.nombre ?? ''} ${patient.apellidoPaterno ?? ''}` }}

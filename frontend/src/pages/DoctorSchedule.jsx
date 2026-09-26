@@ -4,14 +4,19 @@ import { useToast } from '../context/ToastContext';
 import {
   listSchedules,
   createSchedule,
+  updateSchedule,
   deleteSchedule,
   listScheduleExceptions,
   createScheduleException,
   deleteScheduleException,
+  getMyDoctorProfile,
+  updateMyDoctorProfile,
 } from '../api/doctors';
+import { listCatalog } from '../api/priceCatalog';
+import ServicePicker from '../components/ServicePicker';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
-import { CalendarOff, Palmtree, Plus, X } from 'lucide-react';
+import { CalendarOff, Palmtree, Plus, Stethoscope, X } from 'lucide-react';
 import Modal from '../components/Modal';
 import DoctorLayout from '../components/DoctorLayout';
 
@@ -27,6 +32,11 @@ export default function DoctorSchedule() {
   const [exceptionForm, setExceptionForm] = useState({ fecha: '', horaInicio: '', horaFin: '', tipo: 'bloqueo', motivo: '' });
   const [error, setError] = useState('');
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  // Bloque de horario en edición (null = se está agregando uno nuevo).
+  const [editingScheduleId, setEditingScheduleId] = useState(null);
+  const [catalog, setCatalog] = useState([]);
+  const [consultaForm, setConsultaForm] = useState(null);
+  const [savingConsulta, setSavingConsulta] = useState(false);
   const [exceptionModalOpen, setExceptionModalOpen] = useState(false);
 
   const loadSchedules = () => listSchedules(user.id).then(setSchedules);
@@ -35,18 +45,60 @@ export default function DoctorSchedule() {
   useEffect(() => {
     loadSchedules();
     loadExceptions();
+    getMyDoctorProfile().then((p) =>
+      setConsultaForm({
+        duracionCitaMinutos: p.duracionCitaMinutos,
+        biografia: p.biografia || '',
+        servicioIds: (p.servicios || []).map((s) => s.id),
+      })
+    );
+    listCatalog().then(setCatalog).catch(() => setCatalog([]));
   }, []);
+
+  const handleSaveConsulta = async (e) => {
+    e.preventDefault();
+    setSavingConsulta(true);
+    try {
+      await updateMyDoctorProfile({ ...consultaForm, duracionCitaMinutos: Number(consultaForm.duracionCitaMinutos) });
+      showToast('Consulta actualizada.', { type: 'success' });
+    } catch (err) {
+      const data = err.response?.data;
+      showToast(data?.details?.[0]?.msg || data?.error || 'No se pudo guardar.', { type: 'error' });
+    } finally {
+      setSavingConsulta(false);
+    }
+  };
+
+  const openNewSchedule = () => {
+    setEditingScheduleId(null);
+    setScheduleForm({ diaSemana: '1', horaInicio: '09:00', horaFin: '14:00' });
+    setError('');
+    setScheduleModalOpen(true);
+  };
+
+  const openEditSchedule = (s) => {
+    setEditingScheduleId(s.id);
+    setScheduleForm({ diaSemana: String(s.diaSemana), horaInicio: s.horaInicio.slice(0, 5), horaFin: s.horaFin.slice(0, 5) });
+    setError('');
+    setScheduleModalOpen(true);
+  };
 
   const handleAddSchedule = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      await createSchedule(user.id, { ...scheduleForm, diaSemana: Number(scheduleForm.diaSemana) });
-      showToast('Horario agregado.', { type: 'success' });
+      const data = { ...scheduleForm, diaSemana: Number(scheduleForm.diaSemana) };
+      if (editingScheduleId) {
+        await updateSchedule(editingScheduleId, data);
+        showToast('Horario actualizado.', { type: 'success' });
+      } else {
+        await createSchedule(user.id, data);
+        showToast('Horario agregado.', { type: 'success' });
+      }
       setScheduleModalOpen(false);
       loadSchedules();
     } catch (err) {
-      setError(err.response?.data?.error || 'No se pudo agregar el horario.');
+      setError(err.response?.data?.error || 'No se pudo guardar el horario.');
     }
   };
 
@@ -74,10 +126,66 @@ export default function DoctorSchedule() {
       <div>
         <PageHeader
           eyebrow="Vista médico"
+          title="Mi consulta"
+          subtitle="Duración de cada cita y servicios que ofreces. Los pacientes lo ven al agendar."
+        />
+        {consultaForm ? (
+          <form onSubmit={handleSaveConsulta} className="card-surface p-5 space-y-5">
+            <div className="grid sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+                  Duración de consulta (min)
+                </label>
+                <input
+                  type="number"
+                  min={10}
+                  max={240}
+                  step={5}
+                  required
+                  value={consultaForm.duracionCitaMinutos}
+                  onChange={(e) => setConsultaForm((f) => ({ ...f, duracionCitaMinutos: e.target.value }))}
+                  className="input-field"
+                />
+              </div>
+              <p className="sm:col-span-2 self-end text-xs text-slate-500 dark:text-slate-400">
+                Cambiarla solo afecta a las citas nuevas; las ya agendadas conservan su horario.
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Biografía</label>
+              <textarea
+                rows={3}
+                value={consultaForm.biografia}
+                onChange={(e) => setConsultaForm((f) => ({ ...f, biografia: e.target.value }))}
+                className="input-field"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2 flex items-center gap-1.5">
+                <Stethoscope size={15} aria-hidden="true" /> Servicios que ofreces
+              </p>
+              <ServicePicker
+                catalog={catalog}
+                selectedIds={consultaForm.servicioIds}
+                onChange={(servicioIds) => setConsultaForm((f) => ({ ...f, servicioIds }))}
+              />
+            </div>
+            <button type="submit" disabled={savingConsulta} className="btn-primary text-sm disabled:opacity-50">
+              {savingConsulta ? 'Guardando...' : 'Guardar consulta'}
+            </button>
+          </form>
+        ) : (
+          <p className="text-slate-500 dark:text-slate-400">Cargando...</p>
+        )}
+      </div>
+
+      <div>
+        <PageHeader
+          eyebrow="Horario"
           title="Mi horario"
-          subtitle="Horario semanal recurrente en el que estás disponible para citas."
+          subtitle="Horario semanal recurrente en el que estás disponible. Toca un bloque para editarlo."
           action={
-            <button type="button" onClick={() => setScheduleModalOpen(true)} className="btn-primary text-sm">
+            <button type="button" onClick={openNewSchedule} className="btn-primary text-sm">
               <Plus size={16} aria-hidden="true" /> Agregar horario
             </button>
           }
@@ -95,9 +203,14 @@ export default function DoctorSchedule() {
                       key={s.id}
                       className="group flex items-center justify-between gap-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-medium rounded-lg px-2 py-1"
                     >
-                      <span>
+                      <button
+                        type="button"
+                        onClick={() => openEditSchedule(s)}
+                        className="hover:underline"
+                        aria-label="Editar horario"
+                      >
                         {s.horaInicio.slice(0, 5)}–{s.horaFin.slice(0, 5)}
-                      </span>
+                      </button>
                       <button
                         onClick={() => deleteSchedule(s.id).then(loadSchedules)}
                         className="text-indigo-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition"
@@ -162,7 +275,11 @@ export default function DoctorSchedule() {
         </div>
       </div>
 
-      <Modal open={scheduleModalOpen} onClose={() => setScheduleModalOpen(false)} title="Agregar horario">
+      <Modal
+        open={scheduleModalOpen}
+        onClose={() => setScheduleModalOpen(false)}
+        title={editingScheduleId ? 'Editar horario' : 'Agregar horario'}
+      >
         <form onSubmit={handleAddSchedule} className="space-y-4">
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
@@ -199,9 +316,26 @@ export default function DoctorSchedule() {
             </div>
           </div>
           {error && <Alert>{error}</Alert>}
-          <button type="submit" className="btn-primary text-sm">
-            Agregar
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button type="submit" className="btn-primary text-sm">
+              {editingScheduleId ? 'Guardar cambios' : 'Agregar'}
+            </button>
+            {editingScheduleId && (
+              <button
+                type="button"
+                onClick={() =>
+                  deleteSchedule(editingScheduleId).then(() => {
+                    setScheduleModalOpen(false);
+                    showToast('Horario eliminado.', { type: 'success' });
+                    loadSchedules();
+                  })
+                }
+                className="text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-2 rounded-lg transition"
+              >
+                Eliminar bloque
+              </button>
+            )}
+          </div>
         </form>
       </Modal>
 

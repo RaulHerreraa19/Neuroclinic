@@ -41,6 +41,9 @@ async function updateSchedule(req, res) {
   if (!schedule) return res.status(404).json({ error: 'Horario no encontrado.' });
   await assertCanManage(req, schedule.doctorId);
   const { diaSemana, horaInicio, horaFin, activo } = req.body;
+  if ((horaInicio ?? schedule.horaInicio).slice(0, 5) >= (horaFin ?? schedule.horaFin).slice(0, 5)) {
+    return res.status(400).json({ error: 'La hora de inicio debe ser antes que la hora de fin.' });
+  }
   await schedule.update({ diaSemana, horaInicio, horaFin, activo });
   res.json({ schedule });
 }

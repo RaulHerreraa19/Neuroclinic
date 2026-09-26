@@ -17,7 +17,7 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="bg-sand-50/90 backdrop-blur dark:bg-slate-900 border-b border-sand-200 dark:border-slate-800 sticky top-0 z-40">
+    <nav className="bg-sand-100/90 backdrop-blur dark:bg-slate-900 border-b border-sand-300/70 dark:border-slate-800 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-bold text-navy-900 dark:text-white">
           <Logo className="w-9 h-9 shadow-sm rounded-full" />
@@ -80,7 +80,7 @@ function UserMenu({ user, onLogout }) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-sand-200 dark:hover:bg-slate-800 transition"
       >
         <Avatar nombre={user.nombre} apellido={user.apellidoPaterno} src={resolveUploadUrl(user.avatarUrl)} size="sm" />
         <span className="hidden sm:inline text-slate-700 dark:text-slate-200 font-medium max-w-[8rem] truncate">
@@ -90,11 +90,11 @@ function UserMenu({ user, onLogout }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-sand-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-lg py-1.5 animate-fade-in-up">
+        <div className="absolute right-0 mt-2 w-48 bg-sand-100 dark:bg-slate-800 rounded-xl border border-sand-300 dark:border-slate-700 shadow-lg py-1.5 animate-fade-in-up">
           <Link
             to="/perfil"
             onClick={() => setOpen(false)}
-            className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-navy-900 dark:hover:text-white transition"
+            className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-sand-200 dark:hover:bg-slate-700 hover:text-navy-900 dark:hover:text-white transition"
           >
             Mi perfil
           </Link>
@@ -116,8 +116,8 @@ function NavLink({ to, children, pill }) {
       to={to}
       className={
         pill
-          ? 'px-4 py-2 rounded-lg bg-navy-50 text-navy-700 dark:bg-navy-800 dark:text-navy-100 font-medium hover:bg-navy-100 dark:hover:bg-navy-700 transition'
-          : 'px-3 py-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-navy-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition'
+          ? 'px-4 py-2 rounded-lg bg-sand-200 text-navy-700 dark:bg-navy-800 dark:text-navy-100 font-medium hover:bg-sand-300 dark:hover:bg-navy-700 transition'
+          : 'px-3 py-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-navy-900 dark:hover:text-white hover:bg-sand-200 dark:hover:bg-slate-800 transition'
       }
     >
       {children}

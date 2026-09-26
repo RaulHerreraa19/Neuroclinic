@@ -41,6 +41,21 @@ export default function DoctorProfile() {
         {doctor.doctorProfile?.biografia && (
           <p className="text-slate-600 dark:text-slate-300 mt-4">{doctor.doctorProfile.biografia}</p>
         )}
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-3">
+          Consultas de {doctor.doctorProfile?.duracionCitaMinutos} minutos
+        </p>
+        {doctor.doctorProfile?.servicios?.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {doctor.doctorProfile.servicios.map((s) => (
+              <span
+                key={s.id}
+                className="text-sm bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full"
+              >
+                {s.nombre}
+              </span>
+            ))}
+          </div>
+        )}
 
         <h2 className="text-lg font-semibold text-navy-900 dark:text-white mt-8 mb-3">Elige un horario disponible</h2>
         <SlotPicker doctorId={id} selected={selected} onSelect={setSelected} />

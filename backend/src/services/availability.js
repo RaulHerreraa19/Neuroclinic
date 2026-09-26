@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { DoctorProfile, DoctorSchedule, ScheduleException, Appointment } = require('../models');
+const { User, DoctorProfile, DoctorSchedule, ScheduleException, Appointment } = require('../models');
 const { timeToMinutes, minutesToTime, weekdayOf, todayDateOnly } = require('../utils/timeUtils');
 
 function enumerateDates(fromDateStr, toDateStr) {
@@ -22,7 +22,12 @@ function overlaps(startA, endA, startB, endB) {
 // Calcula los huecos disponibles de un doctor entre fromDateStr y toDateStr (ambos "YYYY-MM-DD"),
 // a partir de su horario recurrente, restando excepciones (bloqueos/vacaciones) y citas ya ocupadas.
 async function getAvailableSlots(doctorId, fromDateStr, toDateStr) {
-  const doctorProfile = await DoctorProfile.findOne({ where: { userId: doctorId } });
+  // Un doctor dado de baja (lógica) no ofrece huecos: esto bloquea también todos los flujos
+  // de agendado, que validan contra esta misma función vía isSlotAvailable.
+  const doctorProfile = await DoctorProfile.findOne({
+    where: { userId: doctorId },
+    include: [{ model: User, as: 'user', attributes: [], where: { isActive: true } }],
+  });
   if (!doctorProfile) {
     const err = new Error('Doctor no encontrado.');
     err.status = 404;

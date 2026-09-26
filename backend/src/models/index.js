@@ -9,6 +9,7 @@ const ClinicalRecord = require('./clinicalRecord');
 const AuditLog = require('./auditLog');
 const PriceCatalogItem = require('./priceCatalogItem');
 const Payment = require('./payment');
+const DoctorService = require('./doctorService');
 
 // User <-> PatientProfile (1:1)
 User.hasOne(PatientProfile, { foreignKey: 'userId', as: 'patientProfile', onDelete: 'CASCADE' });
@@ -64,6 +65,20 @@ Payment.belongsTo(PriceCatalogItem, { foreignKey: 'priceCatalogItemId', as: 'pri
 User.hasMany(Payment, { foreignKey: 'cobradoPorUserId', as: 'paymentsCollected' });
 Payment.belongsTo(User, { foreignKey: 'cobradoPorUserId', as: 'cobradoPor' });
 
+// DoctorProfile <-> PriceCatalogItem (N:M): servicios que ofrece cada doctor.
+DoctorProfile.belongsToMany(PriceCatalogItem, {
+  through: DoctorService,
+  foreignKey: 'doctorProfileId',
+  otherKey: 'priceCatalogItemId',
+  as: 'servicios',
+});
+PriceCatalogItem.belongsToMany(DoctorProfile, {
+  through: DoctorService,
+  foreignKey: 'priceCatalogItemId',
+  otherKey: 'doctorProfileId',
+  as: 'doctorProfiles',
+});
+
 module.exports = {
   sequelize,
   User,
@@ -76,4 +91,5 @@ module.exports = {
   AuditLog,
   PriceCatalogItem,
   Payment,
+  DoctorService,
 };

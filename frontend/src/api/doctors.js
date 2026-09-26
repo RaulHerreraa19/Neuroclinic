@@ -20,3 +20,6 @@ export const deleteScheduleException = (id) => client.delete(`/schedule-exceptio
 
 export const listDoctorAppointments = (doctorId, from, to) =>
   client.get(`/doctors/${doctorId}/appointments`, { params: { from, to } }).then((r) => r.data.appointments);
+
+export const getMyDoctorProfile = () => client.get('/doctors/me/profile').then((r) => r.data.profile);
+export const updateMyDoctorProfile = (data) => client.put('/doctors/me/profile', data).then((r) => r.data.profile);
