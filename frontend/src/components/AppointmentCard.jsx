@@ -3,7 +3,7 @@ import { ESTADO_STYLES, ESTADO_LABELS } from '../utils/appointmentStatus';
 
 export default function AppointmentCard({ appointment, personLabel, personName, avatarNombre, avatarApellido, actions }) {
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4">
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-sand-50 dark:bg-slate-800 p-4 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4">
       <div className="flex items-center gap-3 min-w-0">
         <Avatar nombre={avatarNombre ?? personName} apellido={avatarApellido} />
         <div className="min-w-0">

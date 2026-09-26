@@ -162,7 +162,7 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
                   className={`px-3 py-1.5 rounded-lg text-sm border transition ${
                     selectedSlot?.horaInicio === s.horaInicio
                       ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700'
-                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-navy-400 dark:hover:border-navy-500'
+                      : 'bg-sand-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-navy-400 dark:hover:border-navy-500'
                   }`}
                 >
                   {s.horaInicio.slice(0, 5)}
@@ -336,7 +336,7 @@ function TabButton({ active, onClick, children }) {
       className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition ${
         active
           ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700'
-          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
+          : 'bg-sand-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
       }`}
     >
       {children}

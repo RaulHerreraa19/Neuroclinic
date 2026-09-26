@@ -27,6 +27,15 @@ export default {
           500: '#FF7A50',
           600: '#F2603A',
         },
+        // Neutros cálidos derivados del coral: fondo del modo claro (sustituye al blanco
+        // puro, que encandilaba). 50 = superficies/tarjetas, 100 = fondo de página,
+        // 200 = secciones destacadas, 300 = bordes.
+        sand: {
+          50: '#FFF8F4',
+          100: '#FCEEE6',
+          200: '#F8E1D4',
+          300: '#EDCDBB',
+        },
         lavender: {
           50: '#F4F5FB',
         },

@@ -45,7 +45,7 @@ export default function Login() {
 
   return (
     <div>
-    <div className="min-h-[80vh] bg-lavender-50 dark:bg-navy-900 flex items-center justify-center px-4 py-16">
+    <div className="min-h-[80vh] bg-sand-200 dark:bg-navy-900 flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-sm panel-elevated border border-slate-100 dark:border-slate-700 p-8 animate-fade-in-up">
         <Logo className="w-12 h-12 rounded-full mx-auto" />
         <h1 className="text-xl font-bold text-navy-900 dark:text-white mb-1 mt-4 text-center">Iniciar sesión</h1>

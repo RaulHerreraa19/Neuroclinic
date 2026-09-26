@@ -82,7 +82,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-lavender-50 dark:bg-navy-900">
+      <section className="bg-sand-200 dark:bg-navy-900">
         <div className="max-w-6xl mx-auto px-4 py-16 grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center">
           <div className="animate-fade-in-up">
             <span className="badge-eyebrow">Ciencia que comprende</span>
@@ -134,7 +134,7 @@ export default function Home() {
       </section>
 
       {/* Agenda */}
-      <section id="agenda" className="bg-lavender-50 dark:bg-navy-900 py-16">
+      <section id="agenda" className="bg-sand-200 dark:bg-navy-900 py-16">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 dark:text-white tracking-tight">
@@ -169,7 +169,7 @@ export default function Home() {
                     type="button"
                     onClick={() => handleSelectDoctor(doctor)}
                     style={{ animationDelay: `${i * 70}ms` }}
-                    className={`animate-fade-in-up text-left rounded-xl p-5 bg-white dark:bg-slate-800 border shadow-sm transition flex gap-4 items-start ${
+                    className={`animate-fade-in-up text-left rounded-xl p-5 bg-sand-50 dark:bg-slate-800 border shadow-sm transition flex gap-4 items-start ${
                       isSelected
                         ? 'border-navy-700 dark:border-navy-400 ring-2 ring-navy-100 dark:ring-navy-800'
                         : 'border-slate-200 dark:border-slate-700 hover:border-navy-300 dark:hover:border-navy-600 hover:shadow-md'

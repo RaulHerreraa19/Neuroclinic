@@ -14,7 +14,7 @@ export default function AdminLayout({ children }) {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-6">
       <aside className="md:w-52 flex-shrink-0">
-        <nav className="flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible pb-2 md:pb-0 md:sticky md:top-20 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3">
+        <nav className="flex md:flex-col gap-1.5 overflow-x-auto md:overflow-visible pb-2 md:pb-0 md:sticky md:top-20 bg-sand-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}

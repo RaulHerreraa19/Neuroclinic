@@ -28,7 +28,7 @@ export default function Modal({ open, onClose, title, subtitle, children, maxWid
         onClick={onClose}
       />
       <div
-        className={`relative w-full ${maxWidth} bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6 sm:p-8 animate-scale-in max-h-[90vh] overflow-y-auto`}
+        className={`relative w-full ${maxWidth} bg-sand-50 dark:bg-slate-800 rounded-xl shadow-xl p-6 sm:p-8 animate-scale-in max-h-[90vh] overflow-y-auto`}
       >
         {(title || onClose) && (
           <div className="flex items-start justify-between gap-4 mb-5">

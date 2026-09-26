@@ -72,7 +72,7 @@ function FilterChip({ label, active, onClick }) {
       className={`text-sm capitalize px-3.5 py-1.5 rounded-full border transition ${
         active
           ? 'bg-navy-900 dark:bg-navy-700 text-white border-navy-900 dark:border-navy-700'
-          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-navy-300 dark:hover:border-navy-600'
+          : 'bg-sand-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-navy-300 dark:hover:border-navy-600'
       }`}
     >
       {label}

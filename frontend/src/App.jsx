@@ -18,7 +18,7 @@ import AdminPriceCatalog from './pages/AdminPriceCatalog';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900">
+    <div className="min-h-screen bg-sand-100 dark:bg-slate-900">
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />

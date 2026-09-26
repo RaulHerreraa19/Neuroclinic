@@ -17,7 +17,7 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 sticky top-0 z-40">
+    <nav className="bg-sand-50/90 backdrop-blur dark:bg-slate-900 border-b border-sand-200 dark:border-slate-800 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-bold text-navy-900 dark:text-white">
           <Logo className="w-9 h-9 shadow-sm rounded-full" />
@@ -90,7 +90,7 @@ function UserMenu({ user, onLogout }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-lg py-1.5 animate-fade-in-up">
+        <div className="absolute right-0 mt-2 w-48 bg-sand-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-lg py-1.5 animate-fade-in-up">
           <Link
             to="/perfil"
             onClick={() => setOpen(false)}
