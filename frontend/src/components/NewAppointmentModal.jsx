@@ -114,13 +114,15 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
     setError('');
     try {
       if (mode === 'existing') {
-        await createAppointmentForDoctor({
+        const data = await createAppointmentForDoctor({
           patientId: selectedPatient.id,
           fecha,
           horaInicio: selectedSlot.horaInicio,
           motivoConsulta,
         });
-        showToast('Cita agendada.', { type: 'success' });
+        showToast(data.emailEnviado ? 'Cita agendada. Le enviamos la confirmación por correo.' : 'Cita agendada.', {
+          type: 'success',
+        });
       } else {
         const data = await registerPatientByStaff({
           ...patientForm,

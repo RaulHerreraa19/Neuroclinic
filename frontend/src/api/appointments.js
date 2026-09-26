@@ -1,8 +1,8 @@
 import client from './client';
 
-export const createAppointment = (data) => client.post('/appointments', data).then((r) => r.data.appointment);
+export const createAppointment = (data) => client.post('/appointments', data).then((r) => r.data);
 export const createAppointmentForDoctor = (data) =>
-  client.post('/appointments/doctor', data).then((r) => r.data.appointment);
+  client.post('/appointments/doctor', data).then((r) => r.data);
 export const listMyAppointments = () => client.get('/appointments/me').then((r) => r.data.appointments);
 export const cancelAppointment = (id) => client.patch(`/appointments/${id}/cancel`).then((r) => r.data.appointment);
 export const updateAppointmentStatus = (id, estado) =>

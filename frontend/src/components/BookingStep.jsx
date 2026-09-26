@@ -44,7 +44,8 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
     setSubmitting(true);
     setError('');
     try {
-      await createAppointment({ doctorId, fecha, horaInicio, motivoConsulta });
+      const data = await createAppointment({ doctorId, fecha, horaInicio, motivoConsulta });
+      setEmailEnviado(Boolean(data.emailEnviado));
       setConfirmed(true);
       showToast('Tu cita quedó confirmada.', { type: 'success' });
     } catch (err) {
@@ -87,13 +88,15 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
         <p className="text-slate-500 dark:text-slate-400 mt-2">
           Tu cita con {doctorNombre} quedó registrada para el {fecha} a las {horaInicio.slice(0, 5)}.
         </p>
-        {!user && (
+        {(!user || emailEnviado) && (
           <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm bg-slate-50 dark:bg-slate-800 rounded-lg p-3 flex items-start gap-2 text-left">
             {emailEnviado && <Mail size={16} className="flex-shrink-0 mt-0.5" aria-hidden="true" />}
             <span>
-              {emailEnviado
-                ? 'Te enviamos un correo con tu contraseña temporal para que puedas dar seguimiento a tus citas.'
-                : 'Creamos tu cuenta, pero no pudimos enviarte el correo con tu contraseña. Contacta a la clínica para recuperarla.'}
+              {user
+                ? 'Te enviamos un correo con la confirmación y los detalles de tu cita.'
+                : emailEnviado
+                  ? 'Te enviamos un correo con la confirmación de tu cita y tu contraseña temporal para que puedas dar seguimiento a tus citas.'
+                  : 'Creamos tu cuenta, pero no pudimos enviarte el correo con tu contraseña. Contacta a la clínica para recuperarla.'}
             </span>
           </p>
         )}

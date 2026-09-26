@@ -3,6 +3,7 @@ const { assertDoctorOwnedByAdmin } = require('../services/ownership');
 const { Appointment, User, DoctorProfile, PatientProfile } = require('../models');
 const { computeAppointmentSlot, isSlotAvailable } = require('../services/appointments');
 const { recordAudit } = require('../middleware/auditLog');
+const { sendAppointmentConfirmationEmail } = require('../services/email');
 
 // Un paciente ya registrado agenda una cita de seguimiento (el flujo de primera vez pasa por
 // authController.registerPatient, que crea la cuenta y la cita en un solo paso).
@@ -29,7 +30,8 @@ async function createAppointment(req, res) {
   });
 
   await recordAudit({ user: req.user, entidad: 'appointments', entidadId: appointment.id, accion: 'create', req });
-  res.status(201).json({ appointment });
+  const emailEnviado = await sendAppointmentConfirmationEmail({ appointment });
+  res.status(201).json({ appointment, emailEnviado });
 }
 
 // El médico agenda a un paciente ya registrado desde su propio calendario (clic en un hueco
@@ -61,7 +63,8 @@ async function createAppointmentForPatient(req, res) {
   });
 
   await recordAudit({ user: req.user, entidad: 'appointments', entidadId: appointment.id, accion: 'create', req });
-  res.status(201).json({ appointment });
+  const emailEnviado = await sendAppointmentConfirmationEmail({ appointment });
+  res.status(201).json({ appointment, emailEnviado });
 }
 
 async function listMyAppointments(req, res) {

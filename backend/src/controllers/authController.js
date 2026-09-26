@@ -122,20 +122,8 @@ async function createPatientWithAppointment({
   return { ...result, temporaryPassword };
 }
 
-async function sendCredentialsEmailSafely({ user, createdAppointment, temporaryPassword }) {
-  try {
-    const sent = await sendPatientCredentialsEmail({
-      to: user.email,
-      nombre: user.nombre,
-      password: temporaryPassword,
-      fecha: createdAppointment?.fecha,
-      horaInicio: createdAppointment?.horaInicio,
-    });
-    return sent.sent;
-  } catch (err) {
-    console.error('[email] No se pudo enviar el correo de credenciales:', err.message);
-    return false;
-  }
+function sendCredentialsEmailSafely({ user, createdAppointment, temporaryPassword }) {
+  return sendPatientCredentialsEmail({ user, password: temporaryPassword, appointment: createdAppointment });
 }
 
 // Autorregistro público (paciente sin sesión previa): crea su propia cuenta y queda autenticado.
