@@ -138,7 +138,7 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
       onCreated();
       onClose();
     } catch (err) {
-      const message = err.response?.data?.error || 'No se pudo agendar la cita.';
+      const message = err.response?.data?.details?.[0]?.msg || err.response?.data?.error || 'No se pudo agendar la cita.';
       setError(message);
       showToast(message, { type: 'error' });
     } finally {
@@ -259,7 +259,7 @@ export default function NewAppointmentModal({ open, onClose, doctorId, fecha, in
                   value={patientForm.apellidoMaterno}
                   onChange={updatePatientField('apellidoMaterno')}
                 />
-                <Field label="Teléfono" value={patientForm.telefono} onChange={updatePatientField('telefono')} />
+                <Field label="Celular (10 dígitos)" type="tel" inputMode="tel" autoComplete="tel" value={patientForm.telefono} onChange={updatePatientField('telefono')} required />
                 <Field
                   label="Correo"
                   type="email"

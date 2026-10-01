@@ -1,6 +1,10 @@
+const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 const { sequelize, User, PatientProfile } = require('../models');
 const { recordAudit } = require('../middleware/auditLog');
+const { generateTemporaryPassword } = require('../services/passwordReset');
+const { sendClinicPasswordResetEmail } = require('../services/email');
+const { normalizeMxPhone } = require('../utils/phone');
 
 const PATIENT_ATTRIBUTES = ['id', 'email', 'nombre', 'apellidoPaterno', 'apellidoMaterno', 'telefono', 'isActive'];
 const PROFILE_ATTRIBUTES = ['fechaNacimiento', 'sexo', 'direccion', 'contactoEmergenciaNombre', 'contactoEmergenciaTelefono'];
@@ -75,7 +79,7 @@ async function updatePatient(req, res) {
         ...(nombre !== undefined && { nombre }),
         ...(apellidoPaterno !== undefined && { apellidoPaterno }),
         ...(apellidoMaterno !== undefined && { apellidoMaterno }),
-        ...(telefono !== undefined && { telefono }),
+        ...(telefono !== undefined && { telefono: normalizeMxPhone(telefono) }),
         ...(isActive !== undefined && { isActive }),
       },
       { transaction: t }
@@ -113,4 +117,27 @@ async function updatePatient(req, res) {
   res.json({ patient: updated });
 }
 
-module.exports = { searchPatients, listPatients, getPatient, updatePatient };
+// Recuperación asistida en clínica, para el paciente que no tiene a la mano ni su correo ni su
+// celular: el médico genera una contraseña temporal y se la entrega en persona o por teléfono.
+// Se devuelve una sola vez (no se guarda en claro) y cierra las sesiones abiertas del paciente.
+async function resetPatientPassword(req, res) {
+  const patient = await User.findOne({ where: { id: req.params.id, roles: { [Op.contains]: ['paciente'] } } });
+  if (!patient) return res.status(404).json({ error: 'Paciente no encontrado.' });
+
+  const temporaryPassword = generateTemporaryPassword();
+  await patient.update({ passwordHash: await bcrypt.hash(temporaryPassword, 10), passwordChangedAt: new Date() });
+
+  await recordAudit({
+    user: req.user,
+    entidad: 'users',
+    entidadId: patient.id,
+    accion: 'update',
+    req,
+    detalles: { field: 'password', via: 'clinica' },
+  });
+
+  const emailEnviado = await sendClinicPasswordResetEmail({ user: patient, password: temporaryPassword });
+  res.json({ temporaryPassword, emailEnviado });
+}
+
+module.exports = { searchPatients, listPatients, getPatient, updatePatient, resetPatientPassword };

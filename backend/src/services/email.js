@@ -15,6 +15,12 @@ function getTransporter() {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 587),
     secure: process.env.SMTP_SECURE === 'true',
+    // Timeouts cortos: el envío se espera dentro de la petición HTTP, y si el puerto SMTP está
+    // bloqueado (p. ej. Render bloquea 25/465/587) el default de nodemailer (2 min) hace que
+    // el proxy corte la petición con 502 aunque la cita ya se haya guardado.
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
     auth: process.env.SMTP_USER
       ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
       : undefined,
@@ -250,4 +256,67 @@ async function sendAppointmentConfirmationEmail({ appointment }) {
   }
 }
 
-module.exports = { sendPatientCredentialsEmail, sendAppointmentConfirmationEmail };
+// Código de recuperación de contraseña pedido desde "¿Olvidaste tu contraseña?".
+async function sendPasswordResetCodeEmail({ user, code, minutes }) {
+  return deliver({
+    to: user.email,
+    subject: `Tu código de recuperación: ${code}`,
+    content: {
+      heading: 'Recupera tu contraseña',
+      intro: `Hola ${user.nombre}, recibimos una solicitud para restablecer tu contraseña de NeuroClinic. Usa este código:`,
+      sections: [{ rows: [['Código', code]], mono: true }],
+      cta: { label: 'Escribir el código', href: `${appUrl()}/recuperar` },
+      notes: [
+        `El código vence en ${minutes} minutos y solo sirve una vez. No lo compartas con nadie: el personal de la clínica nunca te lo pedirá.`,
+        'Si tú no lo pediste, ignora este correo; tu contraseña no cambiará.',
+      ],
+    },
+    devNote: `Código (solo visible en este log de desarrollo): ${code}`,
+  });
+}
+
+// Contraseña temporal generada por el personal de la clínica (el paciente la recibe también en persona).
+async function sendClinicPasswordResetEmail({ user, password }) {
+  return deliver({
+    to: user.email,
+    subject: 'Tu nueva contraseña temporal de NeuroClinic',
+    content: {
+      heading: 'Restablecimos tu contraseña',
+      intro: `Hola ${user.nombre}, a tu solicitud, la clínica restableció tu contraseña. Estos son tus nuevos datos de acceso:`,
+      sections: [
+        {
+          rows: [
+            ['Correo', user.email],
+            ['Contraseña temporal', password],
+          ],
+          mono: true,
+        },
+      ],
+      cta: { label: 'Iniciar sesión', href: `${appUrl()}/login` },
+      notes: [CHANGE_PASSWORD_NOTE],
+    },
+  });
+}
+
+// Aviso de seguridad tras cambiar la contraseña por recuperación: si no fue el paciente, que avise.
+async function sendPasswordChangedEmail({ user }) {
+  return deliver({
+    to: user.email,
+    subject: 'Tu contraseña de NeuroClinic cambió',
+    content: {
+      heading: 'Tu contraseña cambió',
+      intro: `Hola ${user.nombre}, la contraseña de tu cuenta de NeuroClinic se acaba de cambiar y cerramos las sesiones abiertas en otros dispositivos.`,
+      sections: [],
+      cta: { label: 'Iniciar sesión', href: `${appUrl()}/login` },
+      notes: ['Si no fuiste tú, comunícate de inmediato con la clínica.'],
+    },
+  });
+}
+
+module.exports = {
+  sendPatientCredentialsEmail,
+  sendAppointmentConfirmationEmail,
+  sendPasswordResetCodeEmail,
+  sendClinicPasswordResetEmail,
+  sendPasswordChangedEmail,
+};

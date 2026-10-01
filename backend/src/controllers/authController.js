@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { sequelize, User, PatientProfile, Appointment, DoctorProfile } = require('../models');
@@ -7,15 +6,11 @@ const { signToken, setAuthCookie, clearAuthCookie } = require('../utils/authToke
 const { sanitizeUser } = require('../utils/sanitize');
 const { recordAudit } = require('../middleware/auditLog');
 const { computeAppointmentSlot, isSlotAvailable } = require('../services/appointments');
-const { sendPatientCredentialsEmail } = require('../services/email');
+const { sendPatientCredentialsEmail, sendPasswordChangedEmail } = require('../services/email');
+const { generateTemporaryPassword, requestPasswordReset: requestResetCode, confirmPasswordReset: confirmResetCode } = require('../services/passwordReset');
+const { normalizeMxPhone } = require('../utils/phone');
 const { getTomorrowAppointmentsForDoctor, getTomorrowAppointmentForPatient } = require('../services/reminders');
 const { assertDoctorOwnedByAdmin } = require('../services/ownership');
-
-// El paciente nunca elige su propia contraseña en el alta pública: se genera aquí y se le
-// envía por correo, para no exponer un campo de contraseña en un formulario de agendado.
-function generateTemporaryPassword() {
-  return crypto.randomBytes(9).toString('base64url');
-}
 
 // Lógica compartida por el autorregistro público (registerPatient) y el alta que hace un
 // médico/admin desde su calendario (registerPatientByStaff): crea la cuenta del paciente y,
@@ -58,6 +53,8 @@ async function createPatientWithAppointment({
     }
   }
 
+  // El paciente nunca elige su propia contraseña en el alta pública: se genera aquí y se le
+  // envía por correo, para no exponer un campo de contraseña en un formulario de agendado.
   const temporaryPassword = generateTemporaryPassword();
 
   const result = await sequelize.transaction(async (t) => {
@@ -71,7 +68,7 @@ async function createPatientWithAppointment({
         nombre,
         apellidoPaterno,
         apellidoMaterno,
-        telefono,
+        telefono: normalizeMxPhone(telefono),
       },
       { transaction: t }
     );
@@ -236,9 +233,42 @@ async function changePassword(req, res) {
     return res.status(400).json({ error: 'La contraseña actual es incorrecta.' });
   }
 
-  await req.user.update({ passwordHash: await bcrypt.hash(newPassword, 10) });
+  // passwordChangedAt cierra las demás sesiones; la actual se renueva con un token nuevo.
+  await req.user.update({ passwordHash: await bcrypt.hash(newPassword, 10), passwordChangedAt: new Date() });
+  setAuthCookie(res, signToken(req.user));
   await recordAudit({ user: req.user, entidad: 'users', entidadId: req.user.id, accion: 'update', req, detalles: { field: 'password' } });
   res.status(204).send();
+}
+
+const RESET_REQUESTED_MESSAGE =
+  'Si hay una cuenta con ese dato, te enviamos un código. Revisa tus mensajes (y la carpeta de spam si fue por correo).';
+
+// "¿Olvidaste tu contraseña?": envía un código por correo o SMS según lo que escriba el paciente.
+// La respuesta es idéntica exista o no la cuenta, para no revelar quién es paciente de la clínica.
+async function requestPasswordReset(req, res) {
+  const result = await requestResetCode(req.body.identifier);
+  if (result.user) {
+    await recordAudit({
+      user: null,
+      entidad: 'users',
+      entidadId: result.user.id,
+      accion: 'update',
+      req,
+      detalles: { evento: 'reset_solicitado', via: result.channel, enviado: result.sent, limitado: !!result.limited },
+    });
+  }
+  res.json({ message: RESET_REQUESTED_MESSAGE });
+}
+
+async function confirmPasswordReset(req, res) {
+  const { user, channel } = await confirmResetCode(req.body);
+
+  setAuthCookie(res, signToken(user));
+  await recordAudit({ user, entidad: 'users', entidadId: user.id, accion: 'update', req, detalles: { field: 'password', via: channel } });
+  // Sin await: el aviso nunca lanza y no debe retrasar la respuesta.
+  sendPasswordChangedEmail({ user });
+
+  res.json({ user: sanitizeUser(user) });
 }
 
 // Aviso al iniciar sesión: no aplica a un usuario que solo es admin (sin rol médico/paciente).
@@ -252,4 +282,15 @@ async function getMyReminders(req, res) {
   res.json({});
 }
 
-module.exports = { registerPatient, registerPatientByStaff, login, logout, me, uploadAvatar, changePassword, getMyReminders };
+module.exports = {
+  registerPatient,
+  registerPatientByStaff,
+  login,
+  logout,
+  me,
+  uploadAvatar,
+  changePassword,
+  requestPasswordReset,
+  confirmPasswordReset,
+  getMyReminders,
+};

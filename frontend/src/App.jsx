@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import DoctorProfile from './pages/DoctorProfile';
 import Booking from './pages/Booking';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
 import MyAppointments from './pages/MyAppointments';
 import MyProfile from './pages/MyProfile';
 import DoctorAgenda from './pages/DoctorAgenda';
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/doctors/:id" element={<DoctorProfile />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/recuperar" element={<ForgotPassword />} />
 
         <Route
           path="/mis-citas"

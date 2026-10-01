@@ -15,4 +15,15 @@ const client = axios.create({
   withCredentials: true,
 });
 
+// Las páginas muestran `err.response.data.error` directamente. Nuestro backend siempre manda un
+// texto, pero un proxy (p. ej. Vercel ante un 502) puede mandar `{ error: { code, message } }`,
+// y React truena al intentar pintar un objeto. Aquí se normaliza a texto.
+client.interceptors.response.use(undefined, (err) => {
+  const data = err.response?.data;
+  if (data && typeof data === 'object' && data.error && typeof data.error !== 'string') {
+    data.error = 'El servidor no respondió. Intenta de nuevo en un momento.';
+  }
+  return Promise.reject(err);
+});
+
 export default client;

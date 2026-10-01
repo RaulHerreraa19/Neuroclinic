@@ -10,6 +10,7 @@ const AuditLog = require('./auditLog');
 const PriceCatalogItem = require('./priceCatalogItem');
 const Payment = require('./payment');
 const DoctorService = require('./doctorService');
+const PasswordResetCode = require('./passwordResetCode');
 
 // User <-> PatientProfile (1:1)
 User.hasOne(PatientProfile, { foreignKey: 'userId', as: 'patientProfile', onDelete: 'CASCADE' });
@@ -79,6 +80,10 @@ PriceCatalogItem.belongsToMany(DoctorProfile, {
   as: 'doctorProfiles',
 });
 
+// User <-> PasswordResetCode (1:N): códigos de recuperación de contraseña.
+User.hasMany(PasswordResetCode, { foreignKey: 'userId', as: 'passwordResetCodes', onDelete: 'CASCADE' });
+PasswordResetCode.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 module.exports = {
   sequelize,
   User,
@@ -92,4 +97,5 @@ module.exports = {
   PriceCatalogItem,
   Payment,
   DoctorService,
+  PasswordResetCode,
 };

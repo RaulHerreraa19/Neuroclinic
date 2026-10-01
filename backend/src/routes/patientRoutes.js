@@ -5,6 +5,7 @@ const { authorize } = require('../middleware/roles');
 const { validate } = require('../middleware/validate');
 const { asyncHandler } = require('../middleware/errorHandler');
 const patientController = require('../controllers/patientController');
+const { normalizeMxPhone } = require('../utils/phone');
 
 const router = Router();
 
@@ -21,9 +22,14 @@ router.patch(
     body('isActive').optional().isBoolean(),
     body('fechaNacimiento').optional().isISO8601(),
     body('sexo').optional().isIn(['masculino', 'femenino', 'otro']),
+    body('telefono')
+      .optional()
+      .custom((value) => normalizeMxPhone(value) !== null)
+      .withMessage('Escribe un celular de 10 dígitos.'),
   ],
   validate,
   asyncHandler(patientController.updatePatient)
 );
+router.post('/:id/reset-password', asyncHandler(patientController.resetPatientPassword));
 
 module.exports = router;

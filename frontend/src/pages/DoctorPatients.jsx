@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { listPatientsCatalog, updatePatient } from '../api/patients';
+import { listPatientsCatalog, updatePatient, resetPatientPassword } from '../api/patients';
 import { registerPatientByStaff } from '../api/auth';
 import { useToast } from '../context/ToastContext';
 import DoctorLayout from '../components/DoctorLayout';
@@ -161,7 +161,7 @@ function CreatePatientModal({ open, onClose, onCreated }) {
       onCreated();
       onClose();
     } catch (err) {
-      const message = err.response?.data?.error || 'No se pudo registrar al paciente.';
+      const message = err.response?.data?.details?.[0]?.msg || err.response?.data?.error || 'No se pudo registrar al paciente.';
       setError(message);
       showToast(message, { type: 'error' });
     } finally {
@@ -181,7 +181,7 @@ function CreatePatientModal({ open, onClose, onCreated }) {
           <Field label="Nombre(s)" value={form.nombre} onChange={update('nombre')} required />
           <Field label="Apellido paterno" value={form.apellidoPaterno} onChange={update('apellidoPaterno')} required />
           <Field label="Apellido materno" value={form.apellidoMaterno} onChange={update('apellidoMaterno')} />
-          <Field label="Teléfono" value={form.telefono} onChange={update('telefono')} />
+          <Field label="Celular (10 dígitos)" type="tel" inputMode="tel" autoComplete="tel" value={form.telefono} onChange={update('telefono')} required />
           <Field label="Correo" type="email" value={form.email} onChange={update('email')} required />
           <Field
             label="Fecha de nacimiento"
@@ -273,7 +273,7 @@ function EditPatientModal({ patient, onClose, onSaved }) {
       onSaved();
       onClose();
     } catch (err) {
-      const message = err.response?.data?.error || 'No se pudo actualizar al paciente.';
+      const message = err.response?.data?.details?.[0]?.msg || err.response?.data?.error || 'No se pudo actualizar al paciente.';
       setError(message);
       showToast(message, { type: 'error' });
     } finally {
@@ -288,7 +288,7 @@ function EditPatientModal({ patient, onClose, onSaved }) {
           <Field label="Nombre(s)" value={form.nombre} onChange={update('nombre')} required />
           <Field label="Apellido paterno" value={form.apellidoPaterno} onChange={update('apellidoPaterno')} required />
           <Field label="Apellido materno" value={form.apellidoMaterno} onChange={update('apellidoMaterno')} />
-          <Field label="Teléfono" value={form.telefono} onChange={update('telefono')} />
+          <Field label="Celular (10 dígitos)" type="tel" inputMode="tel" autoComplete="tel" value={form.telefono} onChange={update('telefono')} required />
         </div>
 
         <Field label="Dirección" value={form.direccion} onChange={update('direccion')} />
@@ -331,7 +331,70 @@ function EditPatientModal({ patient, onClose, onSaved }) {
           {submitting ? 'Guardando...' : 'Guardar cambios'}
         </button>
       </form>
+
+      <PasswordResetSection patient={patient} />
     </Modal>
+  );
+}
+
+// Recuperación asistida: para el paciente que no tiene acceso ni a su correo ni a su celular.
+// La contraseña temporal se muestra una sola vez; el médico se la dicta o entrega en persona.
+function PasswordResetSection({ patient }) {
+  const { showToast } = useToast();
+  const [state, setState] = useState('idle'); // idle | confirm | loading | { temporaryPassword, emailEnviado }
+
+  useEffect(() => setState('idle'), [patient]);
+
+  const handleReset = async () => {
+    setState('loading');
+    try {
+      setState(await resetPatientPassword(patient.id));
+    } catch (err) {
+      showToast(err.response?.data?.error || 'No se pudo restablecer la contraseña.', { type: 'error' });
+      setState('idle');
+    }
+  };
+
+  return (
+    <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700">
+      <h3 className="text-sm font-semibold text-navy-900 dark:text-white">Acceso del paciente</h3>
+      {typeof state === 'object' ? (
+        <div className="mt-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900 rounded-lg p-4">
+          <p className="text-sm text-slate-600 dark:text-slate-300">Contraseña temporal (solo se muestra esta vez):</p>
+          <p className="mt-1 font-mono text-lg font-bold text-navy-900 dark:text-white select-all">{state.temporaryPassword}</p>
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+            {state.emailEnviado ? 'También se envió a su correo. ' : 'No se pudo enviar por correo: entrégasela en persona. '}
+            Pídele que la cambie desde "Mi perfil" al entrar.
+          </p>
+        </div>
+      ) : (
+        <>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Si el paciente no puede recuperar su contraseña por correo o SMS, genera una temporal. Sus sesiones
+            abiertas se cerrarán.
+          </p>
+          {state === 'idle' ? (
+            <button type="button" onClick={() => setState('confirm')} className="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-sand-100 dark:hover:bg-slate-700 transition mt-3">
+              Restablecer contraseña
+            </button>
+          ) : (
+            <div className="flex flex-wrap gap-2 mt-3">
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={state === 'loading'}
+                className="btn-primary text-sm !bg-amber-600 hover:!bg-amber-700 disabled:opacity-50"
+              >
+                {state === 'loading' ? 'Generando...' : 'Sí, generar contraseña temporal'}
+              </button>
+              <button type="button" onClick={() => setState('idle')} className="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-sand-100 dark:hover:bg-slate-700 transition">
+                Cancelar
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
   );
 }
 

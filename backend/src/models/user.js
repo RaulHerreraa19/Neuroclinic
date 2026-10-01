@@ -36,6 +36,8 @@ const User = sequelize.define(
     telefono: { type: DataTypes.STRING, allowNull: true },
     isActive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true, field: 'is_active' },
     avatarUrl: { type: DataTypes.STRING, allowNull: true, field: 'avatar_url' },
+    // Último cambio de contraseña: los tokens emitidos antes quedan inválidos (middleware/auth.js).
+    passwordChangedAt: { type: DataTypes.DATE, allowNull: true, field: 'password_changed_at' },
   },
   {
     tableName: 'users',

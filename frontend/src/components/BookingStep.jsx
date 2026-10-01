@@ -49,7 +49,7 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
       setConfirmed(true);
       showToast('Tu cita quedó confirmada.', { type: 'success' });
     } catch (err) {
-      const message = err.response?.data?.error || 'No se pudo agendar la cita.';
+      const message = err.response?.data?.details?.[0]?.msg || err.response?.data?.error || 'No se pudo agendar la cita.';
       setError(message);
       showToast(message, { type: 'error' });
     } finally {
@@ -70,7 +70,7 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
       setConfirmed(true);
       showToast('¡Cuenta creada y cita agendada!', { type: 'success' });
     } catch (err) {
-      const message = err.response?.data?.error || 'No se pudo completar el registro.';
+      const message = err.response?.data?.details?.[0]?.msg || err.response?.data?.error || 'No se pudo completar el registro.';
       setError(message);
       showToast(message, { type: 'error' });
     } finally {
@@ -150,7 +150,7 @@ export default function BookingStep({ doctorId, doctorNombre, fecha, horaInicio,
             <Field label="Nombre(s)" value={form.nombre} onChange={update('nombre')} required />
             <Field label="Apellido paterno" value={form.apellidoPaterno} onChange={update('apellidoPaterno')} required />
             <Field label="Apellido materno" value={form.apellidoMaterno} onChange={update('apellidoMaterno')} />
-            <Field label="Teléfono" value={form.telefono} onChange={update('telefono')} />
+            <Field label="Celular (10 dígitos)" type="tel" inputMode="tel" autoComplete="tel" value={form.telefono} onChange={update('telefono')} required />
             <Field
               label="Fecha de nacimiento"
               type="date"

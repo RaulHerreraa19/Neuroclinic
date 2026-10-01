@@ -12,6 +12,10 @@ async function authenticate(req, res, next) {
     if (!user || !user.isActive) {
       return res.status(401).json({ error: 'Sesión inválida.' });
     }
+    // Tokens emitidos antes del último cambio de contraseña ya no valen (sesiones en otros equipos).
+    if (user.passwordChangedAt && payload.iat < Math.floor(user.passwordChangedAt.getTime() / 1000)) {
+      return res.status(401).json({ error: 'Tu contraseña cambió. Inicia sesión de nuevo.' });
+    }
     req.user = user;
     next();
   } catch (err) {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Footer from '../components/Footer';
@@ -12,7 +12,7 @@ const ROLE_PRIORITY = [
   ['paciente', '/mis-citas'],
 ];
 
-function homeForRoles(roles = []) {
+export function homeForRoles(roles = []) {
   const match = ROLE_PRIORITY.find(([role]) => roles.includes(role));
   return match ? match[1] : '/';
 }
@@ -68,6 +68,11 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               className="input-field"
             />
+            <div className="text-right mt-1.5">
+              <Link to="/recuperar" className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
           </div>
           {error && (
             <p className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 rounded-lg px-3 py-2.5">

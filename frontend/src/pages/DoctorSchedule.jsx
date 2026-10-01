@@ -51,6 +51,8 @@ export default function DoctorSchedule() {
         biografia: p.biografia || '',
         servicioIds: (p.servicios || []).map((s) => s.id),
       })
+    ).catch((err) =>
+      showToast(err.response?.data?.error || 'No se pudo cargar tu perfil de consulta.', { type: 'error' })
     );
     listCatalog().then(setCatalog).catch(() => setCatalog([]));
   }, []);
