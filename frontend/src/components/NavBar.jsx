@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, LogIn } from 'lucide-react';
+import { ChevronDown, LogIn, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { resolveUploadUrl } from '../api/client';
 import Avatar from './Avatar';
@@ -10,6 +10,17 @@ import ThemeToggle from './ThemeToggle';
 export default function NavBar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const links = [];
+  if (!user) {
+    links.push({ to: '/', label: 'Inicio' }, { to: '/#servicios', label: 'Servicios' }, { to: '/#agenda', label: 'Agendar Cita', pill: true });
+  }
+  if (user?.roles?.includes('paciente')) links.push({ to: '/mis-citas', label: 'Mis citas' });
+  if (user?.roles?.includes('medico')) links.push({ to: '/agenda', label: 'Mi panel' });
+  if (user?.roles?.includes('admin')) {
+    links.push({ to: '/admin/panel', label: 'Panel' }, { to: '/admin/doctores', label: 'Doctores' }, { to: '/admin/citas', label: 'Citas' });
+  }
 
   const handleLogout = async () => {
     await logout();
@@ -18,46 +29,62 @@ export default function NavBar() {
 
   return (
     <nav className="bg-sand-50/90 backdrop-blur dark:bg-slate-900 border-b border-sand-200 dark:border-slate-800 sticky top-0 z-40">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-bold text-navy-900 dark:text-white">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+        <Link to="/" className="flex items-center gap-2 font-bold text-navy-900 dark:text-white flex-shrink-0">
           <Logo className="w-9 h-9 shadow-sm rounded-full" />
           NeuroClinic
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2 text-sm">
-          {!user && (
-            <>
-              <NavLink to="/">Inicio</NavLink>
-              <NavLink to="/#servicios">Servicios</NavLink>
-              <NavLink to="/#agenda" pill>
-                Agendar Cita
+          <div className="hidden md:flex items-center gap-1 sm:gap-2">
+            {links.map((l) => (
+              <NavLink key={l.to} to={l.to} pill={l.pill}>
+                {l.label}
               </NavLink>
-            </>
-          )}
-          {user?.roles?.includes('paciente') && <NavLink to="/mis-citas">Mis citas</NavLink>}
-          {user?.roles?.includes('medico') && <NavLink to="/agenda">Mi panel</NavLink>}
-          {user?.roles?.includes('admin') && (
-            <>
-              <NavLink to="/admin/panel">Panel</NavLink>
-              <NavLink to="/admin/doctores">Doctores</NavLink>
-              <NavLink to="/admin/citas">Citas</NavLink>
-            </>
-          )}
+            ))}
+          </div>
 
           <ThemeToggle />
 
           {!user ? (
             <Link
               to="/login"
-              className="ml-1 sm:ml-2 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-navy-900 dark:bg-navy-700 text-white font-medium hover:bg-navy-700 dark:hover:bg-navy-600 transition"
+              className="ml-1 sm:ml-2 flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg bg-navy-900 dark:bg-navy-700 text-white font-medium hover:bg-navy-700 dark:hover:bg-navy-600 transition"
             >
-              <LogIn size={15} aria-hidden="true" /> Iniciar Sesión
+              <LogIn size={15} aria-hidden="true" />
+              <span className="hidden sm:inline">Iniciar Sesión</span>
+              <span className="sm:hidden">Entrar</span>
             </Link>
           ) : (
             <UserMenu user={user} onLogout={handleLogout} />
           )}
+
+          {links.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={menuOpen}
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
         </div>
       </div>
+
+      {menuOpen && (
+        <div
+          className="md:hidden border-t border-sand-200 dark:border-slate-800 px-4 py-3 flex flex-col gap-1"
+          onClick={() => setMenuOpen(false)}
+        >
+          {links.map((l) => (
+            <NavLink key={l.to} to={l.to} pill={l.pill}>
+              {l.label}
+            </NavLink>
+          ))}
+        </div>
+      )}
     </nav>
   );
 }

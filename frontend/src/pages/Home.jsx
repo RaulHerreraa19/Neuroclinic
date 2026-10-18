@@ -83,7 +83,7 @@ export default function Home() {
     <div>
       {/* Hero */}
       <section className="bg-sand-200 dark:bg-navy-900">
-        <div className="max-w-6xl mx-auto px-4 py-16 grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center">
+        <div className="max-w-6xl mx-auto px-4 py-10 sm:py-16 grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center">
           <div className="animate-fade-in-up">
             <span className="badge-eyebrow">Ciencia que comprende</span>
             <h1 className="text-4xl sm:text-5xl font-bold text-navy-900 dark:text-white mt-4 leading-tight tracking-tight">
@@ -98,7 +98,7 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="animate-fade-in-up rounded-xl bg-navy-900 dark:bg-navy-950 text-white p-8">
+          <div className="animate-fade-in-up rounded-xl bg-navy-900 dark:bg-navy-950 text-white p-6 sm:p-8">
             <p className="text-xs font-semibold uppercase tracking-wide text-navy-300">Atención integral y empática</p>
             <div className="mt-5 space-y-4">
               {CREDENTIALS.map((c) => (
@@ -115,7 +115,7 @@ export default function Home() {
       </section>
 
       {/* Servicios */}
-      <section id="servicios" className="max-w-6xl mx-auto px-4 py-14">
+      <section id="servicios" className="max-w-6xl mx-auto px-4 py-10 sm:py-14">
         <div className="grid sm:grid-cols-3 gap-5">
           {SERVICES.map((service, i) => (
             <div
@@ -134,7 +134,7 @@ export default function Home() {
       </section>
 
       {/* Agenda */}
-      <section id="agenda" className="bg-sand-200 dark:bg-navy-900 py-16">
+      <section id="agenda" className="bg-sand-200 dark:bg-navy-900 py-10 sm:py-16">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 dark:text-white tracking-tight">
@@ -146,7 +146,7 @@ export default function Home() {
             </p>
           </div>
 
-          <ol className="flex items-center justify-center gap-2 sm:gap-6 mt-8 text-sm">
+          <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:gap-6 mt-8 text-xs sm:text-sm">
             <StepPill n={1} label="Doctor" active={!selectedDoctor} done={Boolean(selectedDoctor)} />
             <Connector />
             <StepPill n={2} label="Fecha y hora" active={Boolean(selectedDoctor) && !selectedSlot} done={Boolean(selectedSlot)} />
@@ -197,7 +197,7 @@ export default function Home() {
 
           {selectedDoctor && (
             <div className="mt-10 animate-fade-in-up">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                 <p className="text-slate-500 dark:text-slate-400 text-sm">
                   Selecciona un día en el calendario para ver las horas disponibles de{' '}
                   <span className="font-medium text-navy-900 dark:text-white">{doctorNombreCompleto(selectedDoctor)}</span>.

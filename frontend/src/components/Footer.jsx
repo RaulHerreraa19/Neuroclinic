@@ -25,10 +25,10 @@ export default function Footer() {
               <Phone size={14} aria-hidden="true" /> (55) 0000 0000
             </li>
             <li className="flex items-center gap-2">
-              <Mail size={14} aria-hidden="true" /> contacto@neuroclinic.test
+              <Mail size={14} aria-hidden="true" /> neuroclinic@gmail.com
             </li>
             <li className="flex items-center gap-2">
-              <MapPin size={14} aria-hidden="true" /> Ciudad de México, México
+              <MapPin size={14} aria-hidden="true" /> Colima, Colima
             </li>
           </ul>
         </div>

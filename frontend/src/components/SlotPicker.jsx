@@ -89,7 +89,7 @@ export default function SlotPicker({ doctorId, onSelect, selected }) {
 
   return (
     <div className="grid md:grid-cols-2 gap-4">
-      <div className="card-surface p-5">
+      <div className="card-surface p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4">
           <button
             type="button"
@@ -157,7 +157,7 @@ export default function SlotPicker({ doctorId, onSelect, selected }) {
         )}
       </div>
 
-      <div className="card-surface p-5">
+      <div className="card-surface p-4 sm:p-5">
         {!activeDate ? (
           <div className="h-full flex flex-col items-center justify-center text-center py-10 text-slate-400 dark:text-slate-500">
             <CalendarDays size={36} className="mb-3" aria-hidden="true" />
@@ -173,7 +173,7 @@ export default function SlotPicker({ doctorId, onSelect, selected }) {
         ) : (
           <div key={activeDate} className="animate-fade-in">
             <p className="font-semibold text-navy-900 dark:text-white mb-3 capitalize">{formatLongDate(activeDate)}</p>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 gap-2">
               {activeSlots.map((slot) => {
                 const isSelected = selected?.fecha === activeDate && selected?.horaInicio === slot.horaInicio;
                 return (
